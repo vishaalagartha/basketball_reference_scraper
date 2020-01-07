@@ -103,9 +103,36 @@ Returns:
 Parameters:
   - `name` - Player full name (e.g. `'LaMarcus Aldridge'`)
   - `stat_type` - One of `'PER_GAME', 'PER_MINUTE', 'PER_POSS', 'ADVANCED'` 
-  - `playoffs` - Whether to return Playoff stats or not. One of `True|False`. Default value is `'PER_GAME'`
+  - `playoffs` - Whether to return Playoff stats or not. One of `True|False`. Default value is `'False'`
   - `career` - Whether to return career stats or not. One of `True|False`. Default value is `False` 
 
 Returns:
 
   A Pandas DataFrame that varies based on the parameters. Please refer to a [sample page](https://www.basketball-reference.com/players/a/aldrila01.html) for full details.
+
+## Seasons
+
+### `get_schedule(season, playoffs=False)`
+
+Parameters:
+  - `season` - Desired year (e.g. `1988`, `2011`)
+  - `playoffs` - Whether to return Playoff stats or not. One of `True|False`. Default value is `'False'`
+
+Returns:
+
+  A Pandas DataFrame that varies based on the parameters. Please refer to a [sample page](https://www.basketball-reference.com/players/a/aldrila01.html) for full details.
+
+### `get_standings(date=None)`
+
+Parameters:
+  - `date` - Desired date in a string format (e.g. `'2011-12-01'`). Default value is `NONE`, which returns standings for the current date.
+
+Returns:
+
+  A dictionary containing standings for the Eastern and Western Conferences along with relevant statistics as a Pandas DataFrame. For example:
+
+  ```
+  >>> d = get_standings()
+  >>> list(d['Western Conference'].columns)
+  ['Western Conference', 'W', 'L', 'W/L%', 'GB', 'PW', 'PL', 'PS/G', 'PA/G']
+  ```

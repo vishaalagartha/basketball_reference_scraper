@@ -1,3 +1,8 @@
+import pandas as pd
+from datetime import datetime
+from requests import get
+from bs4 import BeautifulSoup
+
 def get_schedule(season, playoffs=False):
     months = ['October', 'November', 'December', 'January', 'February', 'March',
             'April', 'May']
@@ -12,7 +17,10 @@ def get_schedule(season, playoffs=False):
     df = df.dropna(axis='columns')
     df = df.reset_index()
     df = df.drop(['Unnamed: 5', 'index'], axis=1)
-    df.columns = ['Date', 'Visitor', 'Visitor Pts', 'Home', 'Home Pts']
+    if len(df.columns)==6:
+        df.columns = ['Date', 'Visitor', 'Visitor Pts', 'Home', 'Home Pts', 'Attendance']
+    elif len(df.columns)==5:
+        df.columns = ['Date', 'Visitor', 'Visitor Pts', 'Home', 'Home Pts']
     playoff_index = df[df['Date']=='Playoffs'].index[0]
     if playoffs:
         df = df[playoff_index+1:]
