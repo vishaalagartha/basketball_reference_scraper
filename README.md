@@ -125,7 +125,7 @@ Returns:
 ### `get_standings(date=None)`
 
 Parameters:
-  - `date` - Desired date in a string format (e.g. `'2011-12-01'`). Default value is `NONE`, which returns standings for the current date.
+  - `date` - Desired date in a string format (e.g. `'2020-01-06'`). Default value is `NONE`, which returns standings for the current date.
 
 Returns:
 
@@ -135,4 +135,24 @@ Returns:
   >>> d = get_standings()
   >>> list(d['Western Conference'].columns)
   ['Western Conference', 'W', 'L', 'W/L%', 'GB', 'PW', 'PL', 'PS/G', 'PA/G']
+  ```
+
+## Box Scores
+
+### `get_box_scores(date, team1, team2, period='GAME', stat_type='BASIC')`
+Parameters:
+  - `date` - Desired date in a string format (e.g. `'2020-01-06'`)
+  - `team1` - One of the team abbreviation (e.g. `'DEN'`, `'GSW'`) 
+  - `team2` - Other team abbreviation (e.g. `'DEN'`, `'GSW'`) 
+  - `period` - Period for which to acquire stats. One of `'GAME'|'Q1'|'Q2'|'Q3'|'Q4'|'H1'|'H2'`. Default value is `'GAME'` 
+  - `stat_type` - Period for which to acquire stats. One of `'BASIC'|'ADVANCED'`. Default value is `'BASIC'`. Note that advanced stats are only available for `period='GAME'`. 
+
+Returns:
+
+  A dictionary containing relevant stats for each team as a Pandas DataFrame. For example:
+
+  ```
+  >>> d = get_box_scores('2020-01-06', 'DEN', 'ATL')
+  >>> list(d['ATL'].columns)
+  ['Players', 'MP', 'FG', 'FGA', 'FG%', '3P', '3PA', '3P%', 'FT', 'FTA', 'FT%', 'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', '+/-']
   ```
