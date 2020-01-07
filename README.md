@@ -1,7 +1,7 @@
 # basketball_reference_scraper
 
 ## Teams
-
+i
 ### `get_roster(team, season)`
 Parameters:
   - `team` - NBA team abbreviation (e.g. `GSW`, `SAS`)
@@ -69,5 +69,3 @@ Returns:
 ### `get_team_misc(team, season, data_format=None)`
 
 ### `get_player_salaries(team, season)`
-
-# basketball_reference_scraper
