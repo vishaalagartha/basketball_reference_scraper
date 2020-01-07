@@ -21,7 +21,7 @@ Returns:
 Parameters:
   - `team` - NBA team abbreviation (e.g. `GSW`, `SAS`)
   - `season` - Desired year (e.g. `1988`, `2011`)
-  - `data_format` - One of `'TOTAL'|'PER_GAME'|'RANK'|'Y/Y'`. Default value is `'PER_GAME'`.
+  - `data_format` - One of `'TOTAL'|'PER_GAME'|'RANK'|'Y/Y'`. Default value is `'PER_GAME'`
 
 Returns:
 
@@ -38,7 +38,7 @@ Returns:
 Parameters:
   - `team` - NBA team abbreviation (e.g. `GSW`, `SAS`)
   - `season` - Desired year (e.g. `1988`, `2011`)
-  - `data_format` - One of `'TOTAL'|'PER_GAME'|'RANK'|'Y/Y'`. Default value is `'PER_GAME'`.
+  - `data_format` - One of `'TOTAL'|'PER_GAME'|'RANK'|'Y/Y'`. Default value is `'PER_GAME'`
 
 Returns:
 
@@ -54,8 +54,8 @@ Returns:
 Parameters:
   - `team` - NBA team abbreviation (e.g. `GSW`, `SAS`)
   - `season` - Desired year (e.g. `1988`, `2011`)
-  - `data_format` - One of `'TOTALS'|'PER_GAME'|'RANK'|'PER_36'|'PER_100_POSS'|'ADVANCED'`. Default value is `'PER_GAME'`.
-  - `playoffs` - Whether to return Playoff stats or not. One of `True|False`.
+  - `data_format` - One of `'TOTALS'|'PER_GAME'|'RANK'|'PER_36'|'PER_100_POSS'|'ADVANCED'`. Default value is `'PER_GAME'`
+  - `playoffs` - Whether to return Playoff stats or not. One of `True|False`
 
 Returns:
 
@@ -78,7 +78,8 @@ Returns:
   A Pandas Series containing the following columns:
 
   ```
-  ['W', 'L', 'PW', 'PL', 'MOV', 'SOS', 'SRS', 'ORtg', 'DRtg', 'Pace', 'FTr', '3PAr', 'eFG%', 'TOV%', 'ORB%', 'FT/FGA', 'eFG%', 'TOV%', 'DRB%', 'FT/FGA', 'Arena', 'Attendance']
+  ['W', 'L', 'PW', 'PL', 'MOV', 'SOS', 'SRS', 'ORtg', 'DRtg', 'Pace', 'FTr', '3PAr', 'eFG%', 'TOV%', 'ORB%', 
+  'FT/FGA', 'eFG%', 'TOV%', 'DRB%', 'FT/FGA', 'Arena', 'Attendance']
   ```
 
 ### `get_player_salaries(team, season)`
@@ -94,3 +95,17 @@ Returns:
   ```
   ['Name', 'Salary']
   ```
+
+## Players
+
+### `get_stats(name, stat_type='PER_GAME', playoffs=False, career=False)`
+
+Parameters:
+  - `name` - Player full name (e.g. `'LaMarcus Aldridge'`)
+  - `stat_type` - One of `'PER_GAME', 'PER_MINUTE', 'PER_POSS', 'ADVANCED'` 
+  - `playoffs` - Whether to return Playoff stats or not. One of `True|False`. Default value is `'PER_GAME'`
+  - `career` - Whether to return career stats or not. One of `True|False`. Default value is `False` 
+
+Returns:
+
+  A Pandas DataFrame that varies based on the parameters. Please refer to a [sample page](https://www.basketball-reference.com/players/a/aldrila01.html) for full details.

@@ -12,7 +12,7 @@ setuptools.setup(
     description="A Python client for scraping stats and data from Basketball Reference",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/pypa/sampleproject",
+    url="https://github.com/vishaalagartha/basketball_reference_scraper",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
