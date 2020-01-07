@@ -71,7 +71,7 @@ def get_roster_stats(team, season, data_format='PER_GAME', playoffs=False):
     roster_df = roster_df.dropna(axis=1)
     return roster_df
 
-def get_team_misc(team, season, data_format=None):
+def get_team_misc(team, season, data_format='PER_GAME'):
     team_misc_df = asyncio.get_event_loop().run_until_complete(get_team_selector(team, season, '#team_misc'))
     index = list(map(lambda x: x[1], team_misc_df.columns))
     if data_format=='RANK':

@@ -1,7 +1,7 @@
 # basketball_reference_scraper
 
 ## Teams
-i
+
 ### `get_roster(team, season)`
 Parameters:
   - `team` - NBA team abbreviation (e.g. `GSW`, `SAS`)
@@ -66,6 +66,31 @@ Returns:
     'NATIONALITY', 'EXPERIENCE', 'COLLEGE']
   ```
 
-### `get_team_misc(team, season, data_format=None)`
+### `get_team_misc(team, season, data_format='PER_GAME')`
+
+Parameters:
+  - `team` - NBA team abbreviation (e.g. `GSW`, `SAS`)
+  - `season` - Desired year (e.g. `1988`, `2011`)
+  - `data_format` - One of `'PER_GAME'|'RANK'`. Default value is `'PER_GAME'`.
+
+Returns:
+
+  A Pandas Series containing the following columns:
+
+  ```
+  ['W', 'L', 'PW', 'PL', 'MOV', 'SOS', 'SRS', 'ORtg', 'DRtg', 'Pace', 'FTr', '3PAr', 'eFG%', 'TOV%', 'ORB%', 'FT/FGA', 'eFG%', 'TOV%', 'DRB%', 'FT/FGA', 'Arena', 'Attendance']
+  ```
 
 ### `get_player_salaries(team, season)`
+
+Parameters:
+  - `team` - NBA team abbreviation (e.g. `GSW`, `SAS`)
+  - `season` - Desired year (e.g. `1988`, `2011`)
+
+Returns:
+
+  A Pandas DataFrame containing the following columns:
+
+  ```
+  ['Name', 'Salary']
+  ```

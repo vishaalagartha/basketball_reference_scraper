@@ -1,5 +1,5 @@
 import unittest
-from basketball_reference_scraper.teams import get_roster, get_team_series, get_opp_series, get_roster_stats, get_player_salaries 
+from basketball_reference_scraper.teams import get_roster, get_team_series, get_opp_series, get_roster_stats, get_team_misc, get_player_salaries 
 
 class TestTeams(unittest.TestCase):
     def test_get_roster(self):
@@ -26,6 +26,13 @@ class TestTeams(unittest.TestCase):
         df = get_roster_stats('GSW', 2019, data_format='ADVANCED', playoffs=True)
         expected_columns = ['Name', 'Age', 'G', 'MP', 'PER', 'TS%', '3PAr', 'FTr', 'ORB%', 'DRB%', 'TRB%', 'AST%', 'STL%', 'BLK%', 'TOV%', 'USG%', 'OWS', 'DWS', 'WS', 'WS/48', 'OBPM', 'DBPM', 'BPM', 'VORP']
         self.assertListEqual(list(df.columns), expected_columns)
+
+    def test_get_team_misc(self):
+        series = get_team_misc('GSW', 2019)
+        expected_indices = ['W', 'L', 'PW', 'PL', 'MOV', 'SOS', 'SRS', 'ORtg', 'DRtg', 'Pace', 'FTr', '3PAr', 'eFG%', 'TOV%', 'ORB%', 'FT/FGA', 'eFG%', 'TOV%', 'DRB%', 'FT/FGA', 'Arena', 'Attendance']
+
+        self.assertListEqual(list(series.index), expected_indices)
+
 
     def test_player_salaries(self):
         df = get_player_salaries('GSW', 2019) 
