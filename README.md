@@ -178,3 +178,44 @@ Returns:
   ```
 
   Note that the team columns (`'Denver'` and `'Atlanta'` in the above example) will contain `nan` if the team did not perform the primary action in the sequence. 
+  
+## Shot Charts
+
+### get_shot_chart(date, team1, team2)
+
+Parameters:
+  - `date` - Desired date in a string format (e.g. `'2020-01-06'`)
+  - `team1` - One of the team abbreviation (e.g. `'DEN'`, `'GSW'`) 
+  - `team2` - Other team abbreviation (e.g. `'DEN'`, `'GSW'`) 
+
+Returns:
+
+  A dictionary containing the shot charts for each team.
+  The shot charts are Pandas DataFrames with the following columns:
+  ```
+  ['x', 'y', 'quarter', 'time_remaining', 'player', 'type', 'value', 'distance']
+  ```
+
+  Where `'x'` and `'y'` are half-court coordinates in feet, `quarter` and `time_remaining` provide the time at which the shot occurred,
+  `player` provides the player who shot the ball, `type` is either `'MAKE'` or `'MISS'`, `value` is the number of points gained, and `distance`
+  is distance from the basket in ft.
+
+  For example:
+
+  ```
+  >>> d = get_shot_chart('2019-12-28', 'TOR', 'BOS')
+  >>> list(d['TOR'].columns)
+  ['x', 'y', 'quarter', 'time_remaining', 'player', 'type', 'value', 'distance']
+  >>> d['TOR'].iloc[1]
+  x                     27.0 ft
+  y                     9.75 ft
+  quarter                     1
+  time_remaining        11:03.0
+  player            Serge Ibaka
+  type                     MISS
+  value                       2
+  distance                 7 ft
+  Name: 1, dtype: object
+  ```
+
+  Note that the team columns (`'Denver'` and `'Atlanta'` in the above example) will contain `nan` if the team did not perform the primary action in the sequence. 
