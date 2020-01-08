@@ -140,6 +140,7 @@ Returns:
 ## Box Scores
 
 ### `get_box_scores(date, team1, team2, period='GAME', stat_type='BASIC')`
+
 Parameters:
   - `date` - Desired date in a string format (e.g. `'2020-01-06'`)
   - `team1` - One of the team abbreviation (e.g. `'DEN'`, `'GSW'`) 
@@ -156,3 +157,24 @@ Returns:
   >>> list(d['ATL'].columns)
   ['Players', 'MP', 'FG', 'FGA', 'FG%', '3P', '3PA', '3P%', 'FT', 'FTA', 'FT%', 'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', '+/-']
   ```
+
+## Play-by-play
+
+### get_pbp(date, team1, team2)
+
+Parameters:
+  - `date` - Desired date in a string format (e.g. `'2020-01-06'`)
+  - `team1` - One of the team abbreviation (e.g. `'DEN'`, `'GSW'`) 
+  - `team2` - Other team abbreviation (e.g. `'DEN'`, `'GSW'`) 
+
+Returns:
+
+  A Pandas DataFrame containing the actions performed by each team at a time. For example:
+
+  ```
+  >>> df = get_pbp('2020-01-06', 'DEN', 'ATL')
+  >>> list(df.columns)
+  ['Clock', 'Denver', 'Atlanta', 'Denver Score', 'Atlanta Score']
+  ```
+
+  Note that the team columns (`'Denver'` and `'Atlanta'` in the above example) will contain `nan` if the team did not perform the primary action in the sequence. 
