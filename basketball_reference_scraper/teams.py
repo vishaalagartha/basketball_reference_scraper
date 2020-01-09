@@ -85,4 +85,5 @@ def get_player_salaries(team, season):
     salaries_df = asyncio.get_event_loop().run_until_complete(get_team_selector(team, season, '#salaries2'))
     salaries_df.rename(columns={'Unnamed: 1':'Name'}, inplace=True)
     salaries_df = salaries_df.drop('Rk', axis=1)
+    salaries_df.columns = ['NAME', 'SALARY']
     return salaries_df

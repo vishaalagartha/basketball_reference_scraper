@@ -6,17 +6,10 @@ from pyppeteer import launch
 import asyncio
 import re
 
-def get_suffix(date, team1, team2):
-    r = get(f'https://www.basketball-reference.com/boxscores/index.fcgi?year={date.year}&month={date.month}&day={date.day}')
-    suffix = None
-    if r.status_code==200:
-        soup = BeautifulSoup(r.content, 'html.parser')
-        for table in soup.find_all('table', attrs={'class': 'teams'}):
-            for anchor in table.find_all('a'):
-                if 'boxscores' in anchor.attrs['href']:
-                    if team1 in anchor.attrs['href'] or team2 in anchor.attrs['href']:
-                        suffix = anchor.attrs['href']
-    return suffix
+try:
+    from utils import get_game_suffix
+except:
+    from basketball_reference_scraper.utils import get_game_suffix
 
 def get_location(s):
     l = s.split(';')
@@ -31,12 +24,12 @@ def get_description(s):
     d = {}
     if match:
         groups = match.groups()
-        d['quarter'] = int(groups[0])
-        d['time_remaining'] = groups[1]
-        d['player'] = groups[2]
-        d['type'] = 'MAKE' if groups[3]=='made' else 'MISS'
-        d['value'] = int(groups[4])
-        d['distance'] = groups[5] + ' ft'
+        d['QUARTER'] = int(groups[0])
+        d['TIME_REMAINING'] = groups[1]
+        d['PLAYER'] = groups[2]
+        d['MAKE_MISS'] = 'MAKE' if groups[3]=='made' else 'MISS'
+        d['VALUE'] = int(groups[4])
+        d['DISTANCE'] = groups[5] + ' ft'
     return d
 
 async def get_shot_chart_helper(suffix, team1, team2):
@@ -54,7 +47,7 @@ async def get_shot_chart_helper(suffix, team1, team2):
 
 def get_shot_chart(date, team1, team2):
     date = pd.to_datetime(date)
-    suffix = get_suffix(date, team1, team2).replace('/boxscores', '')
+    suffix = get_game_suffix(date, team1, team2).replace('/boxscores', '')
     shot_chart1, shot_chart2 = asyncio.get_event_loop().run_until_complete(get_shot_chart_helper(suffix, team1, team2))
     shot_chart1_div = BeautifulSoup(shot_chart1, 'html.parser')
     shot_chart2_div = BeautifulSoup(shot_chart2, 'html.parser')

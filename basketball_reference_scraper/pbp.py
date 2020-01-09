@@ -5,17 +5,10 @@ from datetime import datetime
 from pyppeteer import launch
 import asyncio
 
-def get_suffix(date, team1, team2):
-    r = get(f'https://www.basketball-reference.com/boxscores/index.fcgi?year={date.year}&month={date.month}&day={date.day}')
-    suffix = None
-    if r.status_code==200:
-        soup = BeautifulSoup(r.content, 'html.parser')
-        for table in soup.find_all('table', attrs={'class': 'teams'}):
-            for anchor in table.find_all('a'):
-                if 'boxscores' in anchor.attrs['href']:
-                    if team1 in anchor.attrs['href'] or team2 in anchor.attrs['href']:
-                        suffix = anchor.attrs['href']
-    return suffix
+try:
+    from utils import get_game_suffix
+except:
+    from basketball_reference_scraper.utils import get_game_suffix
 
 async def get_pbp_helper(suffix):
     selector = f'#pbp'
@@ -32,38 +25,40 @@ def format_df(df1):
     i1 = '1st Q.1'
     i2 = '1st Q.3'
     i3 = '1st Q.5'
-    t1 = df1.iloc[0][i1]
-    t2 = df1.iloc[0][i3]
-    q = 'Q1'
-    df = pd.DataFrame(columns=['Clock', t1, t2, f'{t1} Score', f'{t2} Score'])
+    t1 = df1.iloc[0][i1].upper()
+    t2 = df1.iloc[0][i3].upper()
+    q = 1
+    df = pd.DataFrame(columns=['QUARTER', 'TIME_REMAINING', f'{t1}_ACTION', f'{t2}_ACTION', f'{t1}_SCORE', f'{t2}_SCORE'])
     for index, row in df1.iterrows():
-        d = {'Clock': float('nan'), t1: float('nan'), t2: float('nan'), f'{t1} Score': float('nan'), f'{t2} Score': float('nan')}
+        d = {'QUARTER': float('nan'), 'TIME_REMAINING': float('nan'), f'{t1}_ACTION': float('nan'), f'{t2}_ACTION': float('nan'), f'{t1}_SCORE': float('nan'), f'{t2}_SCORE': float('nan')}
         if row[i0]=='2nd Q':
-            q = 'Q2'
+            q = 2
         elif row[i0]=='3rd Q':
-            q = 'Q3'
+            q = 3
         elif row[i0]=='4th Q':
-            q = 'Q4'
+            q = 4
         try:
             t = pd.to_datetime(row[i0])
             if t.hour==12:
                 if q == 'Q1':
-                    d['Clock'] = f'{q} {row[i0]}'
-                    d[t1] = row[i1]
-                    d[t2] = row[i1]
-                    d[f'{t1} Score'] = 0
-                    d[f'{t2} Score'] = 0
+                    d['QUARTER'] = q
+                    d['TIME_REMAINING'] = row[i0]
+                    d[f'{t1}_ACTION'] = row[i1]
+                    d[f'{t2}_ACTION'] = row[i1]
+                    d[f'{t1}_SCORE'] = 0
+                    d[f'{t2}_SCORE'] = 0
                     df = df.append(d, ignore_index=True)
                 continue
         except:
             continue
         try:
-            d['Clock'] = f'{q} {row[i0]}'
-            d[t1] = row[i1]
-            d[t2] = row[i3]
+            d['QUARTER'] = q
+            d['TIME_REMAINING'] = row[i0]
+            d[f'{t1}_ACTION'] = row[i1]
+            d[f'{t2}_ACTION'] = row[i3]
             scores = row[i2].split('-')
-            d[f'{t1} Score'] = int(scores[0])
-            d[f'{t2} Score'] = int(scores[1])
+            d[f'{t1}_SCORE'] = int(scores[0])
+            d[f'{t2}_SCORE'] = int(scores[1])
             df = df.append(d, ignore_index=True)
         except:
             pass
@@ -71,7 +66,7 @@ def format_df(df1):
 
 def get_pbp(date, team1, team2):
     date = pd.to_datetime(date)
-    suffix = get_suffix(date, team1, team2).replace('/boxscores', '')
+    suffix = get_game_suffix(date, team1, team2).replace('/boxscores', '')
     df = asyncio.get_event_loop().run_until_complete(get_pbp_helper(suffix))
     df = format_df(df)
     return df

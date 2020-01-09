@@ -36,7 +36,7 @@ class TestTeams(unittest.TestCase):
 
     def test_player_salaries(self):
         df = get_player_salaries('GSW', 2019) 
-        expected_columns = ['Name', 'Salary']
+        expected_columns = ['NAME', 'SALARY']
         self.assertListEqual(list(df.columns), expected_columns)
 
 if __name__ == '__main__':

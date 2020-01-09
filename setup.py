@@ -20,10 +20,16 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.6",
+    install_requires=['requests', 'asyncio', 'pandas', 'pyppeteer'],
+    extras_require={
+        'test': ['unittest'],
+    },
     keywords=[
-        "NBA",
-        "Basketball",
-        "Basketball Reference",
+        "nba",
+        "sports",
+        "data mining",
+        "basketball",
+        "basketball reference",
         "basketball-reference.com",
         ],
 )

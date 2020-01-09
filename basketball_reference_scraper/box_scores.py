@@ -5,17 +5,10 @@ from datetime import datetime
 from pyppeteer import launch
 import asyncio
 
-def get_suffix(date, team1, team2):
-    r = get(f'https://www.basketball-reference.com/boxscores/index.fcgi?year={date.year}&month={date.month}&day={date.day}')
-    suffix = None
-    if r.status_code==200:
-        soup = BeautifulSoup(r.content, 'html.parser')
-        for table in soup.find_all('table', attrs={'class': 'teams'}):
-            for anchor in table.find_all('a'):
-                if 'boxscores' in anchor.attrs['href']:
-                    if team1 in anchor.attrs['href'] or team2 in anchor.attrs['href']:
-                        suffix = anchor.attrs['href']
-    return suffix
+try:
+    from utils import get_game_suffix
+except:
+    from basketball_reference_scraper.utils import get_game_suffix
 
 async def get_box_scores_helper(suffix, team1, team2, period='GAME', stat_type='BASIC'):
     period = period.lower()
@@ -34,7 +27,7 @@ async def get_box_scores_helper(suffix, team1, team2, period='GAME', stat_type='
 
 def get_box_scores(date, team1, team2, period='GAME', stat_type='BASIC'):
     date = pd.to_datetime(date)
-    suffix = get_suffix(date, team1, team2)
+    suffix = get_game_suffix(date, team1, team2)
     df1, df2 = asyncio.get_event_loop().run_until_complete(get_box_scores_helper(suffix, team1, team2, period, stat_type))
     df1.columns = list(map(lambda x: x[1], df1.columns))
     df1.rename(columns={'Starters': 'Players'}, inplace=True)

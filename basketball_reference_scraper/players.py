@@ -4,17 +4,10 @@ from requests import get
 from bs4 import BeautifulSoup
 import asyncio
 
-def get_player_suffix(name):
-    last_name = name.split(' ')[-1]
-    initial = last_name[0].lower()
-    r = get(f'https://www.basketball-reference.com/players/{initial}')
-    suffix = None
-    if r.status_code==200:
-        soup = BeautifulSoup(r.content, 'html.parser')
-        for table in soup.find_all('table', attrs={'id': 'players'}):
-            for anchor in table.find_all('a'):
-                if anchor.text==name:
-                    return anchor.attrs['href']
+try:
+    from utils import get_player_suffix
+except:
+    from basketball_reference_scraper.utils import get_player_suffix
 
 async def get_player_selector(suffix, selector):
     browser = await launch()
