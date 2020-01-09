@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="basketball_reference_scraper_vishaalagartha",
+    name="basketball_reference_scraper",
     version="0.0.1",
     author="Vishaal Agartha",
     author_email="vishaalagartha@gmail.com",
