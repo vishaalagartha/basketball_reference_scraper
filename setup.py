@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="basketball_reference_scraper",
-    version="0.0.1",
+    version="0.0.2",
     author="Vishaal Agartha",
     author_email="vishaalagartha@gmail.com",
     license="MIT",
@@ -20,7 +20,8 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.6",
-    install_requires=['requests', 'asyncio', 'pandas', 'pyppeteer'],
+    install_requires=['requests', 'asyncio', 'pandas', 'pyppeteer',
+    'nest_asyncio', 'bs4'],
     extras_require={
         'test': ['unittest'],
     },

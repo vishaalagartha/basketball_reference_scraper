@@ -7,8 +7,8 @@ class TestBoxScores(unittest.TestCase):
         self.assertListEqual(list(d.keys()), ['DEN', 'ATL'])
 
         df = d['DEN']
-        expected_columns = ['Players', 'MP', 'FG', 'FGA', 'FG%', '3P', '3PA', '3P%', 'FT', 'FTA', 'FT%', 'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', '+/-'] 
-        self.assertEqual(list(df.columns), expected_columns)
+        expected_columns = ['PLAYER', 'MP', 'FG', 'FGA', 'FG%', '3P', '3PA', '3P%', 'FT', 'FTA', 'FT%', 'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', '+/-']
+        self.assertListEqual(list(df.columns), expected_columns)
 
 if __name__ == '__main__':
     unittest.main()

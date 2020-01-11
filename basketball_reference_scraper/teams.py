@@ -1,89 +1,105 @@
 import pandas as pd
-from pyppeteer import launch
 from requests import get
 from bs4 import BeautifulSoup
-import asyncio
 
-async def get_team_selector(team, season, selector):
-    browser = await launch()
-    page = await browser.newPage()
-    await page.goto(f'https://www.basketball-reference.com/teams/{team}/{season}.html')
-    await page.waitForSelector(f'{selector}')
-    table = await page.querySelectorEval(f'{selector}', '(element) => element.outerHTML')
-    await browser.close()
-    return pd.read_html(table)[0]
+try:
+    from constants import TEAM_TO_TEAM_ABBR
+except:
+    from basketball_reference_scraper.constants import TEAM_TO_TEAM_ABBR
 
-def get_roster(team, season):
-    roster_df = asyncio.get_event_loop().run_until_complete(get_team_selector(team, season, '#roster'))
-    roster_df.columns = ['NUMBER', 'PLAYER', 'POS', 'HEIGHT', 'WEIGHT', 'BIRTH_DATE',
+def get_roster(team, season_end_year):
+    r = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Fteams%2F{team}%2F{season_end_year}.html&div=div_roster')
+    df = None
+    if r.status_code==200:
+        soup = BeautifulSoup(r.content, 'html.parser')
+        table = soup.find('table')
+        df = pd.read_html(str(table))[0]
+        df.columns = ['NUMBER', 'PLAYER', 'POS', 'HEIGHT', 'WEIGHT', 'BIRTH_DATE',
                         'NATIONALITY', 'EXPERIENCE', 'COLLEGE']
-    roster_df['BIRTH_DATE'] = roster_df['BIRTH_DATE'].apply(lambda x: pd.to_datetime(x))
-    roster_df['NATIONALITY'] = roster_df['NATIONALITY'].apply(lambda x: x.upper())
-    return roster_df
+        df['BIRTH_DATE'] = df['BIRTH_DATE'].apply(lambda x: pd.to_datetime(x))
+        df['NATIONALITY'] = df['NATIONALITY'].apply(lambda x: x.upper())
+    return df
 
-def get_team_series(team, season, data_format='PER_GAME'):
-    series = asyncio.get_event_loop().run_until_complete(get_team_selector(team, season, '#team_and_opponent'))
-    series = series.drop(['Unnamed: 0'], axis=1)
+def get_team_stats(team, season_end_year, data_format='PER_GAME'):
+    print(data_format)
     if data_format=='TOTAL':
-        final_series = series.iloc[0]
+        selector = 'div_team-stats-base'
     elif data_format=='PER_GAME':
-        final_series = series.iloc[1]
-    elif data_format=='RANK':
-        final_series = series.iloc[2]
-    elif data_format=='Y/Y':
-        final_series = series.iloc[3]
-    return final_series
+        selector = 'div_team-stats-per_game'
+    elif data_format=='PER_POSS':
+        selector = 'div_team-stats-per_poss'
+    r = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Fleagues%2FNBA_{season_end_year}.html&div={selector}')
+    df = None
+    if r.status_code==200:
+        soup = BeautifulSoup(r.content, 'html.parser')
+        table = soup.find('table')
+        df = pd.read_html(str(table))[0]
+        df['Team'] = df['Team'].apply(lambda x: x.replace('*', '').upper())
+        df = df[:30]
+        df['TEAM'] = df['Team'].apply(lambda x: TEAM_TO_TEAM_ABBR[x])
+        df = df.drop(['Rk', 'Team'], axis=1)
+        s = df[df['TEAM']==team]
+        s['SEASON'] = f'{season_end_year-1}-{str(season_end_year)[2:]}'
+        return pd.Series(index=list(s.columns), data=s.values.tolist()[0])
 
-def get_opp_series(team, season, data_format='PER_GAME'):
-    s1 = asyncio.get_event_loop().run_until_complete(get_team_selector(team, season, '#team_and_opponent'))
-    s1 = s1.drop(['Unnamed: 0'], axis=1)
+def get_opp_stats(team, season_end_year, data_format='PER_GAME'):
     if data_format=='TOTAL':
-        s2 = s1.iloc[4]
+        selector = 'div_opponent-stats-base'
     elif data_format=='PER_GAME':
-        s2 = s1.iloc[5]
-    elif data_format=='RANK':
-        s2 = s1.iloc[6]
-    elif data_format=='Y/Y':
-        s2 = s1.iloc[7]
-    indices = list(map(lambda x: 'OPP_'+x, list(s2.index)))
-    final_series = pd.Series(data=s2.values, index=indices)
-    return final_series
+        selector = 'div_opponent-stats-per_game'
+    elif data_format=='PER_POSS':
+        selector = 'div_opponent-stats-per_poss'
+    r = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Fleagues%2FNBA_{season_end_year}.html&div={selector}')
+    df = None
+    if r.status_code==200:
+        soup = BeautifulSoup(r.content, 'html.parser')
+        table = soup.find('table')
+        df = pd.read_html(str(table))[0]
+        df['Team'] = df['Team'].apply(lambda x: x.replace('*', '').upper())
+        df = df[:30]
+        df['TEAM'] = df['Team'].apply(lambda x: TEAM_TO_TEAM_ABBR[x])
+        df = df.drop(['Rk', 'Team'], axis=1)
+        df.columns = list(map(lambda x: 'OPP_'+x, list(df.columns)))
+        df.rename(columns={'OPP_TEAM': 'TEAM'}, inplace=True)
+        s = df[df['TEAM']==team]
+        s['SEASON'] = f'{season_end_year-1}-{str(season_end_year)[2:]}'
+        return pd.Series(index=list(s.columns), data=s.values.tolist()[0])
 
-def get_roster_stats(team, season, data_format='PER_GAME', playoffs=False):
-    if data_format=='PER_GAME':
-        selector = 'per_game'
-    elif data_format=='TOTALS':
-        selector = 'totals'
-    elif data_format=='PER_36':
-        selector = 'per_minute'
-    elif data_format=='PER_100_POSS':
-        selector = 'per_poss'
-    elif data_format=='ADVANCED':
-        selector = 'advanced'
+def get_team_misc(team, season_end_year):
+    r = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Fleagues%2FNBA_{season_end_year}.html&div=div_misc_stats')
+    df = None
+    if r.status_code==200:
+        soup = BeautifulSoup(r.content, 'html.parser')
+        table = soup.find('table')
+        df = pd.read_html(str(table))[0]
+        df.columns = list(map(lambda x: x[1], list(df.columns)))
+        df['Team'] = df['Team'].apply(lambda x: x.replace('*', '').upper())
+        df = df[:30]
+        df['TEAM'] = df['Team'].apply(lambda x: TEAM_TO_TEAM_ABBR[x])
+        df = df.drop(['Rk', 'Team'], axis=1)
+        df.rename(columns = {'Age': 'AGE', 'Pace': 'PACE', 'Arena': 'ARENA', 'Attend.': 'ATTENDANCE', 'Attend./G': 'ATTENDANCE/G'}, inplace=True)
+        s = df[df['TEAM']==team]
+        s['SEASON'] = f'{season_end_year-1}-{str(season_end_year)[2:]}'
+        return pd.Series(index=list(s.columns), data=s.values.tolist()[0])
 
+def get_roster_stats(team, season_end_year, data_format='PER_GAME', playoffs=False):
     if playoffs:
-        selector = 'playoffs_'+selector
-        
-    selector = '#'+selector
-    roster_df = asyncio.get_event_loop().run_until_complete(get_team_selector(team, season, selector))
-    roster_df = roster_df.drop('Rk', axis=1)
-    roster_df.rename(columns={'Unnamed: 1':'Name'}, inplace=True)
-    roster_df = roster_df.dropna(axis=1)
-    return roster_df
-
-def get_team_misc(team, season, data_format='PER_GAME'):
-    team_misc_df = asyncio.get_event_loop().run_until_complete(get_team_selector(team, season, '#team_misc'))
-    index = list(map(lambda x: x[1], team_misc_df.columns))
-    if data_format=='RANK':
-        series = team_misc_df.iloc[1]
+        period = 'playoffs'
     else:
-        series = team_misc_df.iloc[0]
-    final_series = pd.Series(series.values, index = index)[1:]
-    return final_series
-
-def get_player_salaries(team, season):
-    salaries_df = asyncio.get_event_loop().run_until_complete(get_team_selector(team, season, '#salaries2'))
-    salaries_df.rename(columns={'Unnamed: 1':'Name'}, inplace=True)
-    salaries_df = salaries_df.drop('Rk', axis=1)
-    salaries_df.columns = ['NAME', 'SALARY']
-    return salaries_df
+        period = 'leagues'
+    selector = data_format.lower()
+    r = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2F{period}%2FNBA_{season_end_year}_{selector}.html&div=div_{selector}_stats')
+    df = None
+    if r.status_code==200:
+        soup = BeautifulSoup(r.content, 'html.parser')
+        table = soup.find('table')
+        df2 = pd.read_html(str(table))[0]
+        for index, row in df2.iterrows():
+            if row['Tm']==team:
+                if df is None:
+                    df = pd.DataFrame(columns=list(row.index)+['SEASON'])
+                row['SEASON'] = f'{season_end_year-1}-{str(season_end_year)[2:]}'
+                df = df.append(row)
+        df.rename(columns = {'Player': 'PLAYER', 'Age': 'AGE', 'Tm': 'TEAM', 'Pos': 'POS'}, inplace=True)
+        df = df.reset_index().drop(['Rk', 'index'], axis=1)
+        return df

@@ -10,29 +10,24 @@ try:
 except:
     from basketball_reference_scraper.utils import get_game_suffix
 
-async def get_box_scores_helper(suffix, team1, team2, period='GAME', stat_type='BASIC'):
-    period = period.lower()
-    stat_type=stat_type.lower()
-    selector1 = f'#box-{team1}-{period}-{stat_type}'
-    selector2 = f'#box-{team2}-{period}-{stat_type}'
-    browser = await launch()
-    page = await browser.newPage()
-    await page.goto(f'https://www.basketball-reference.com{suffix}')
-    await page.waitForSelector(f'{selector1}')
-    await page.waitForSelector(f'{selector2}')
-    table1 = await page.querySelectorEval(f'{selector1}', '(element) => element.outerHTML')
-    table2 = await page.querySelectorEval(f'{selector2}', '(element) => element.outerHTML')
-    await browser.close()
-    return pd.read_html(table1)[0], pd.read_html(table2)[0]
-
 def get_box_scores(date, team1, team2, period='GAME', stat_type='BASIC'):
     date = pd.to_datetime(date)
-    suffix = get_game_suffix(date, team1, team2)
-    df1, df2 = asyncio.get_event_loop().run_until_complete(get_box_scores_helper(suffix, team1, team2, period, stat_type))
-    df1.columns = list(map(lambda x: x[1], df1.columns))
-    df1.rename(columns={'Starters': 'Players'}, inplace=True)
-    df1 = df1[df1['Players']!='Reserves']
-    df2.columns = list(map(lambda x: x[1], df2.columns))
-    df2.rename(columns={'Starters': 'Players'}, inplace=True)
-    df2 = df2[df2['Players']!='Reserves']
-    return {team1: df1, team2: df2}
+    suffix = get_game_suffix(date, team1, team2).replace('/', '%2F')
+    r1 = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url={suffix}&div=div_box-{team1}-{period.lower()}-{stat_type.lower()}')
+    r2 = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url={suffix}&div=div_box-{team2}-{period.lower()}-{stat_type.lower()}')
+    if r1.status_code==200 and r2.status_code==200:
+        soup = BeautifulSoup(r1.content, 'html.parser')
+        table = soup.find('table')
+        df1 = pd.read_html(str(table))[0]
+        df1.columns = list(map(lambda x: x[1], list(df1.columns)))
+        df1.rename(columns = {'Starters': 'PLAYER'}, inplace=True)
+        reserve_index = df1[df1['PLAYER']=='Reserves'].index[0]
+        df1 = df1.drop(reserve_index).reset_index().drop('index', axis=1)
+        soup = BeautifulSoup(r2.content, 'html.parser')
+        table = soup.find('table')
+        df2 = pd.read_html(str(table))[0]
+        df2.columns = list(map(lambda x: x[1], list(df2.columns)))
+        df2.rename(columns = {'Starters': 'PLAYER'}, inplace=True)
+        reserve_index = df2[df2['PLAYER']=='Reserves'].index[0]
+        df2 = df2.drop(reserve_index).reset_index().drop('index', axis=1)
+        return {team1: df1, team2: df2}

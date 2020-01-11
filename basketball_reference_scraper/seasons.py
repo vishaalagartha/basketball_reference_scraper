@@ -27,6 +27,9 @@ def get_schedule(season, playoffs=False):
     else:
         df = df[:playoff_index]
     df['Date'] = df['Date'].apply(lambda x: pd.to_datetime(x))
+    df.rename(columns = {'Date': 'DATE', 'Visitor': 'VISITOR', 'Visitor Pts':
+        'VISITOR_PTS', 'Home': 'HOME', 'Home Pts': 'HOME_PTS', 'Attendance':
+        'ATTENDANCE'}, inplace=True)
     return df
 
 def get_standings(date=None):
@@ -42,6 +45,8 @@ def get_standings(date=None):
         e_df = pd.read_html(str(e_table))[0]
         w_table = soup.find('table', attrs={'id': 'standings_w'})
         w_df = pd.read_html(str(w_table))[0]
-        d['Eastern Conference'] = e_df
-        d['Western Conference'] = w_df
+        e_df.rename(columns={'Eastern Conference': 'TEAM'}, inplace=True)
+        w_df.rename(columns={'Western Conference': 'TEAM'}, inplace=True)
+        d['EASTERN_CONF'] = e_df
+        d['WESTERN_CONF'] = w_df
     return d

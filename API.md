@@ -1,9 +1,15 @@
 ## Teams
 
+Usage
+
+```
+from basketball_reference_scraper.teams import get_roster, get_team_stats, get_opp_stats, get_roster_stats, get_team_misc
+```
+
 ### `get_roster(team, season)`
 Parameters:
-  - `team` - NBA team abbreviation (e.g. `GSW`, `SAS`)
-  - `season` - Desired end year (e.g. `1988`, `2011`)
+  - `team` - NBA team abbreviation (e.g. `'GSW'`, `'SAS'`)
+  - `season_end_year` - Desired end year (e.g. `1988`, `2011`)
 
 Returns:
 
@@ -14,11 +20,11 @@ Returns:
     'NATIONALITY', 'EXPERIENCE', 'COLLEGE']
   ```
 
-### `get_team_series(team, season, data_format='PER_GAME')`
+### `get_team_stats(team, season_end_year, data_format='PER_GAME')`
 
 Parameters:
-  - `team` - NBA team abbreviation (e.g. `GSW`, `SAS`)
-  - `season` - Desired end year (e.g. `1988`, `2011`)
+  - `team` - NBA team abbreviation (e.g. `'GSW'`, `'SAS'`)
+  - `season_end_year` - Desired end year (e.g. `1988`, `2011`)
   - `data_format` - One of `'TOTAL'|'PER_GAME'|'RANK'|'Y/Y'`. Default value is `'PER_GAME'`
 
 Returns:
@@ -31,11 +37,11 @@ Returns:
   ```
 
 
-### `get_opp_series(team, season, data_format='PER_GAME')`
+### `get_opp_stats(team, season_end_year, data_format='PER_GAME')`
 
 Parameters:
-  - `team` - NBA team abbreviation (e.g. `GSW`, `SAS`)
-  - `season` - Desired end year (e.g. `1988`, `2011`)
+  - `team` - NBA team abbreviation (e.g. `'GSW'`, `'SAS'`)
+  - `season_end_year` - Desired end year (e.g. `1988`, `2011`)
   - `data_format` - One of `'TOTAL'|'PER_GAME'|'RANK'|'Y/Y'`. Default value is `'PER_GAME'`
 
 Returns:
@@ -50,8 +56,8 @@ Returns:
 ### `get_roster_stats(team, season, data_format='PER_GAME', playoffs=False)`
 
 Parameters:
-  - `team` - NBA team abbreviation (e.g. `GSW`, `SAS`)
-  - `season` - Desired end year (e.g. `1988`, `2011`)
+  - `team` - NBA team abbreviation (e.g. `'GSW'`, `'SAS'`)
+  - `season_end_year` - Desired end year (e.g. `1988`, `2011`)
   - `data_format` - One of `'TOTALS'|'PER_GAME'|'RANK'|'PER_36'|'PER_100_POSS'|'ADVANCED'`. Default value is `'PER_GAME'`
   - `playoffs` - Whether to return Playoff stats or not. One of `True|False`
 
@@ -60,15 +66,14 @@ Returns:
   A Pandas Series containing the following columns:
 
   ```
-  ['NUMBER', 'PLAYER', 'POS', 'HEIGHT', 'WEIGHT', 'BIRTH_DATE', 
-    'NATIONALITY', 'EXPERIENCE', 'COLLEGE']
+  ['PLAYER', 'POS', 'AGE', 'TEAM', 'G', 'GS', 'MP', 'FG', 'FGA', 'FG%', '3P', '3PA', '3P%', '2P', '2PA', '2P%', 'eFG%', 'FT', 'FTA', 'FT%', 'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', 'SEASON']
   ```
 
 ### `get_team_misc(team, season, data_format='PER_GAME')`
 
 Parameters:
-  - `team` - NBA team abbreviation (e.g. `GSW`, `SAS`)
-  - `season` - Desired end year (e.g. `1988`, `2011`)
+  - `team` - NBA team abbreviation (e.g. `'GSW'`, `'SAS'`)
+  - `season_end_year` - Desired end year (e.g. `1988`, `2011`)
   - `data_format` - One of `'PER_GAME'|'RANK'`. Default value is `'PER_GAME'`.
 
 Returns:
@@ -80,35 +85,35 @@ Returns:
   'FT/FGA', 'eFG%', 'TOV%', 'DRB%', 'FT/FGA', 'Arena', 'Attendance']
   ```
 
-### `get_player_salaries(team, season)`
-
-Parameters:
-  - `team` - NBA team abbreviation (e.g. `GSW`, `SAS`)
-  - `season` - Desired end year (e.g. `1988`, `2011`)
-
-Returns:
-
-  A Pandas DataFrame containing the following columns:
-
-  ```
-  ['NAME', 'SALARY']
-  ```
-
 ## Players
+
+Usage
+
+```
+from basketball_reference_scraper.players import get_stats
+```
 
 ### `get_stats(name, stat_type='PER_GAME', playoffs=False, career=False)`
 
 Parameters:
   - `name` - Player full name (e.g. `'LaMarcus Aldridge'`)
   - `stat_type` - One of `'PER_GAME', 'PER_MINUTE', 'PER_POSS', 'ADVANCED'` 
-  - `playoffs` - Whether to return Playoff stats or not. One of `True|False`. Default value is `'False'`
+  - `playoffs` - Whether to return Playoff stats or not. One of `True|False`. Default value is `False`
   - `career` - Whether to return career stats or not. One of `True|False`. Default value is `False` 
 
 Returns:
 
-  A Pandas DataFrame that varies based on the parameters. Please refer to a [sample page](https://www.basketball-reference.com/players/a/aldrila01.html) for full details.
+  A Pandas DataFrame that varies based on the parameters passed.
+  Please refer to a [sample page](https://www.basketball-reference.com/players/a/aldrila01.html) for full details.
 
 ## Seasons
+
+Usage
+
+```
+from basketball_reference_scraper.seasons import get_schedule, get_standings
+```
+
 
 ### `get_schedule(season, playoffs=False)`
 
@@ -118,7 +123,11 @@ Parameters:
 
 Returns:
 
-  A Pandas DataFrame that varies based on the parameters. Please refer to a [sample page](https://www.basketball-reference.com/players/a/aldrila01.html) for full details.
+  A Pandas DataFrame with the following columns:
+
+  ```
+  ['DATE', 'VISITOR', 'VISITOR_PTS', 'HOME', 'HOME_PTS', 'ATTENDANCE']
+  ```
 
 ### `get_standings(date=None)`
 
@@ -131,11 +140,17 @@ Returns:
 
   ```
   >>> d = get_standings()
-  >>> list(d['Western Conference'].columns)
-  ['Western Conference', 'W', 'L', 'W/L%', 'GB', 'PW', 'PL', 'PS/G', 'PA/G']
+  >>> list(d['WESTERN_CONF'].columns)
+  ['TEAM', 'W', 'L', 'W/L%', 'GB', 'PW', 'PL', 'PS/G', 'PA/G']
   ```
 
 ## Box Scores
+
+Usage
+
+```
+from basketball_reference_scraper.box_scores import get_box_scores
+```
 
 ### `get_box_scores(date, team1, team2, period='GAME', stat_type='BASIC')`
 
@@ -153,10 +168,16 @@ Returns:
   ```
   >>> d = get_box_scores('2020-01-06', 'DEN', 'ATL')
   >>> list(d['ATL'].columns)
-  ['Players', 'MP', 'FG', 'FGA', 'FG%', '3P', '3PA', '3P%', 'FT', 'FTA', 'FT%', 'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', '+/-']
+  ['PLAYER', 'MP', 'FG', 'FGA', 'FG%', '3P', '3PA', '3P%', 'FT', 'FTA', 'FT%', 'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', '+/-']
   ```
 
 ## Play-by-play
+
+Usage
+
+```
+from basketball_reference_scraper.pbp import get_pbp
+```
 
 ### get_pbp(date, team1, team2)
 
@@ -172,12 +193,18 @@ Returns:
   ```
   >>> df = get_pbp('2020-01-06', 'DEN', 'ATL')
   >>> list(df.columns)
-  ['QUARTER', 'TIME_REMAINING', f'{t1}_ACTION', f'{t2}_ACTION', f'{t1}_SCORE', f'{t2}_SCORE']
+  ['QUARTER', 'TIME_REMAINING', 'DENVER_ACTION', 'ATLANTA_ACTION', 'DENVER_SCORE', 'ATLANTA_SCORE']
   ```
 
   Note that the `ACTION` columns (`'DENVER_ACTION'` and `'ATLANTA_ACTION'` in the above example) will contain `nan` if the team did not perform the primary action in the sequence. 
-  
+
 ## Shot Charts
+
+Usage
+
+```
+from basketball_reference_scraper.shot_charts import get_shot_charts
+```
 
 ### get_shot_chart(date, team1, team2)
 
