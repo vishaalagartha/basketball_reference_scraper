@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="basketball_reference_scraper",
-    version="1.0.0",
+    version="1.0.1",
     author="Vishaal Agartha",
     author_email="vishaalagartha@gmail.com",
     license="MIT",
@@ -28,7 +28,7 @@ setuptools.setup(
         'pandas==0.25.3',
         'python-dateutil==2.8.1',
         'pytz==2019.3',
-        'requests==2.5.4.1',
+        'requests==2.22.0',
         'six==1.13.0',
         'soupsieve==1.9.5'
     ],
