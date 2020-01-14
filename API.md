@@ -244,6 +244,26 @@ Returns:
 
   Note that the team columns (`'Denver'` and `'Atlanta'` in the above example) will contain `nan` if the team did not perform the primary action in the sequence. 
 
+## Injury Report
+
+Usage
+
+```
+from basketball_reference_scraper.injury_report import get_injury_report
+```
+
+
+### get_injury_report()
+
+Parameters:
+
+Returns:
+
+  A Pandas DataFrames with the following columns:
+  ```
+  ['PLAYER', 'TEAM', 'DATE', 'INJURY', 'STATUS', 'DESCRIPTION']
+  ```
+
 ## Constants and Parameter Notes
 
 ### Dates

@@ -1,5 +1,6 @@
 basketball_reference_scraper_vishaalagartha.egg-info/
 basketball_reference_scraper/__pycache__/*
+test-basketball-reference-scraper/
 test/__pycache__/*
 .DS_STORE
 dist/
