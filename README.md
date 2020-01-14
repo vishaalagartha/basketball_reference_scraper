@@ -11,15 +11,6 @@ Install using the following command:
 pip install basketball-reference-scraper==v1.0.1
 ```
 
-If you're getting issues installing the dependencies listed in the `install_requires` or `requirements.txt` files. Try installing them manually via these commands:
-```
-python -m pip install pandas
-python -m pip install bs4
-python -m pip install lxml
-```
-
-This is caused by an ongoing issue with pip.
-
 ### Via GitHub
 Alternatively, you can just clone this repo and import the libraries at your own discretion.
 Note that this means you may have to install additional python packages including `requests`, `asyncio`, `pandas`, and `pyppeteer`.
