@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="basketball_reference_scraper",
+    name="basketball_reference_scraper_vishaalagartha1",
     version="1.0.0",
     author="Vishaal Agartha",
     author_email="vishaalagartha@gmail.com",
@@ -20,7 +20,18 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.6",
-    install_requires=['requests', 'pandas', 'bs4'],
+    install_requires=[
+        'beautifulsoup4==4.8.2',
+        'bs4==0.0.1',
+        'lxml==4.4.2',
+        'numpy==1.18.1',
+        'pandas==0.25.3',
+        'python-dateutil==2.8.1',
+        'pytz==2019.3',
+        'requests==2.5.4.1',
+        'six==1.13.0',
+        'soupsieve==1.9.5'
+    ],
     extras_require={
         'test': ['unittest'],
     },

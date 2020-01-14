@@ -2,8 +2,6 @@ import pandas as pd
 from requests import get
 from bs4 import BeautifulSoup
 from datetime import datetime
-from pyppeteer import launch
-import asyncio
 
 try:
     from utils import get_game_suffix

@@ -16,11 +16,12 @@ def get_schedule(season, playoffs=False):
             df = df.append(month_df)
     df = df.dropna(axis='columns')
     df = df.reset_index()
-    df = df.drop(['Unnamed: 5', 'index'], axis=1)
-    if len(df.columns)==6:
-        df.columns = ['Date', 'Visitor', 'Visitor Pts', 'Home', 'Home Pts', 'Attendance']
-    elif len(df.columns)==5:
-        df.columns = ['Date', 'Visitor', 'Visitor Pts', 'Home', 'Home Pts']
+    cols_to_remove = [x for x in df.columns if 'Unnamed' in x]
+    cols_to_remove += [y for y in df.columns if 'Start' in y]
+    cols_to_remove += [z for z in df.columns if 'Attend' in z]
+    cols_to_remove += ['index']
+    df = df.drop(cols_to_remove, axis=1)
+    df.columns = ['Date', 'Visitor', 'Visitor Pts', 'Home', 'Home Pts']
     playoff_index = df[df['Date']=='Playoffs'].index[0]
     if playoffs:
         df = df[playoff_index+1:]

@@ -69,12 +69,11 @@ Returns:
   ['PLAYER', 'POS', 'AGE', 'TEAM', 'G', 'GS', 'MP', 'FG', 'FGA', 'FG%', '3P', '3PA', '3P%', '2P', '2PA', '2P%', 'eFG%', 'FT', 'FTA', 'FT%', 'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', 'SEASON']
   ```
 
-### `get_team_misc(team, season, data_format='PER_GAME')`
+### `get_team_misc(team, season)`
 
 Parameters:
   - `team` - NBA team abbreviation (e.g. `'GSW'`, `'SAS'`)
   - `season_end_year` - Desired end year (e.g. `1988`, `2011`)
-  - `data_format` - One of `'PER_GAME'|'RANK'`. Default value is `'PER_GAME'`.
 
 Returns:
 
@@ -126,7 +125,7 @@ Returns:
   A Pandas DataFrame with the following columns:
 
   ```
-  ['DATE', 'VISITOR', 'VISITOR_PTS', 'HOME', 'HOME_PTS', 'ATTENDANCE']
+  ['DATE', 'VISITOR', 'VISITOR_PTS', 'HOME', 'HOME_PTS']
   ```
 
 ### `get_standings(date=None)`
@@ -203,7 +202,7 @@ Returns:
 Usage
 
 ```
-from basketball_reference_scraper.shot_charts import get_shot_charts
+from basketball_reference_scraper.shot_charts import get_shot_chart
 ```
 
 ### get_shot_chart(date, team1, team2)

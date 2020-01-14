@@ -5,7 +5,7 @@ class TestSeason(unittest.TestCase):
     def test_get_schedule(self):
         df = get_schedule(1999)
         expected_columns = ['DATE', 'VISITOR', 'VISITOR_PTS', 'HOME',
-                'HOME_PTS', 'ATTENDANCE']
+                'HOME_PTS']
         self.assertListEqual(list(df.columns), expected_columns)
 
     def test_get_standings(self):
