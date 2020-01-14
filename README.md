@@ -8,7 +8,7 @@ I wrote this library as an exercise for creating my first PyPi package. Hopefull
 Install using the following command:
 
 ```
-pip install basketball-reference-scraper
+pip install basketball-reference-scraper==v1.0.1
 ```
 
 If you're getting issues installing the dependencies listed in the `install_requires` or `requirements.txt` files. Try installing them manually via these commands:
