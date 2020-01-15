@@ -36,7 +36,7 @@ def get_team_stats(team, season_end_year, data_format='PER_GAME'):
         league_avg_index = df[df['Team']=='League Average'].index[0]
         df = df[:league_avg_index]
         df['Team'] = df['Team'].apply(lambda x: x.replace('*', '').upper())
-        df['TEAM'] = df['Team'].apply(lambda x: TEAM_TO_TEAM_ABBR[x][0])
+        df['TEAM'] = df['Team'].apply(lambda x: TEAM_TO_TEAM_ABBR[x])
         df = df.drop(['Rk', 'Team'], axis=1)
         s = df[df['TEAM']==team]
         s['SEASON'] = f'{season_end_year-1}-{str(season_end_year)[2:]}'
@@ -58,7 +58,7 @@ def get_opp_stats(team, season_end_year, data_format='PER_GAME'):
         league_avg_index = df[df['Team']=='League Average'].index[0]
         df = df[:league_avg_index]
         df['Team'] = df['Team'].apply(lambda x: x.replace('*', '').upper())
-        df['TEAM'] = df['Team'].apply(lambda x: TEAM_TO_TEAM_ABBR[x][0])
+        df['TEAM'] = df['Team'].apply(lambda x: TEAM_TO_TEAM_ABBR[x])
         df = df.drop(['Rk', 'Team'], axis=1)
         df.columns = list(map(lambda x: 'OPP_'+x, list(df.columns)))
         df.rename(columns={'OPP_TEAM': 'TEAM'}, inplace=True)
@@ -77,7 +77,7 @@ def get_team_misc(team, season_end_year):
         league_avg_index = df[df['Team']=='League Average'].index[0]
         df = df[:league_avg_index]
         df['Team'] = df['Team'].apply(lambda x: x.replace('*', '').upper())
-        df['TEAM'] = df['Team'].apply(lambda x: TEAM_TO_TEAM_ABBR[x][0])
+        df['TEAM'] = df['Team'].apply(lambda x: TEAM_TO_TEAM_ABBR[x])
         df = df.drop(['Rk', 'Team'], axis=1)
         df.rename(columns = {'Age': 'AGE', 'Pace': 'PACE', 'Arena': 'ARENA', 'Attend.': 'ATTENDANCE', 'Attend./G': 'ATTENDANCE/G'}, inplace=True)
         s = df[df['TEAM']==team]

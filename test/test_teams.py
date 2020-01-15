@@ -30,7 +30,15 @@ class TestTeams(unittest.TestCase):
     def test_get_team_misc(self):
         series = get_team_misc('GSW', 2019)
         expected_indices = ['AGE', 'W', 'L', 'PW', 'PL', 'MOV', 'SOS', 'SRS', 'ORtg', 'DRtg', 'NRtg', 'PACE', 'FTr', '3PAr', 'TS%', 'eFG%', 'TOV%', 'ORB%', 'FT/FGA', 'eFG%', 'TOV%', 'DRB%', 'FT/FGA', 'ARENA', 'ATTENDANCE', 'ATTENDANCE/G', 'TEAM', 'SEASON']
+        self.assertCountEqual(list(series.index), expected_indices)
 
+        series = get_team_misc('CHO', 2019)
+        self.assertCountEqual(list(series.index), expected_indices)
+
+        series = get_team_misc('NOK', 2007)
+        self.assertCountEqual(list(series.index), expected_indices)
+
+        series = get_team_misc('TCB', 1951)
         self.assertCountEqual(list(series.index), expected_indices)
 
 if __name__ == '__main__':
