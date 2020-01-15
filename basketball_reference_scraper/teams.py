@@ -21,7 +21,6 @@ def get_roster(team, season_end_year):
     return df
 
 def get_team_stats(team, season_end_year, data_format='PER_GAME'):
-    print(data_format)
     if data_format=='TOTAL':
         selector = 'div_team-stats-base'
     elif data_format=='PER_GAME':
@@ -34,8 +33,9 @@ def get_team_stats(team, season_end_year, data_format='PER_GAME'):
         soup = BeautifulSoup(r.content, 'html.parser')
         table = soup.find('table')
         df = pd.read_html(str(table))[0]
+        league_avg_index = df[df['Team']=='League Average'].index[0]
+        df = df[:league_avg_index]
         df['Team'] = df['Team'].apply(lambda x: x.replace('*', '').upper())
-        df = df[:30]
         df['TEAM'] = df['Team'].apply(lambda x: TEAM_TO_TEAM_ABBR[x])
         df = df.drop(['Rk', 'Team'], axis=1)
         s = df[df['TEAM']==team]
@@ -55,8 +55,9 @@ def get_opp_stats(team, season_end_year, data_format='PER_GAME'):
         soup = BeautifulSoup(r.content, 'html.parser')
         table = soup.find('table')
         df = pd.read_html(str(table))[0]
+        league_avg_index = df[df['Team']=='League Average'].index[0]
+        df = df[:league_avg_index]
         df['Team'] = df['Team'].apply(lambda x: x.replace('*', '').upper())
-        df = df[:30]
         df['TEAM'] = df['Team'].apply(lambda x: TEAM_TO_TEAM_ABBR[x])
         df = df.drop(['Rk', 'Team'], axis=1)
         df.columns = list(map(lambda x: 'OPP_'+x, list(df.columns)))
@@ -73,6 +74,8 @@ def get_team_misc(team, season_end_year):
         table = soup.find('table')
         df = pd.read_html(str(table))[0]
         df.columns = list(map(lambda x: x[1], list(df.columns)))
+        league_avg_index = df[df['Team']=='League Average'].index[0]
+        df = df[:league_avg_index]
         df['Team'] = df['Team'].apply(lambda x: x.replace('*', '').upper())
         df = df[:30]
         df['TEAM'] = df['Team'].apply(lambda x: TEAM_TO_TEAM_ABBR[x])
