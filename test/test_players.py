@@ -1,5 +1,5 @@
 import unittest
-from basketball_reference_scraper.players import get_stats
+from basketball_reference_scraper.players import get_stats, get_game_logs
 
 class TestPlayers(unittest.TestCase):
     def test_get_stats(self):
@@ -12,6 +12,11 @@ class TestPlayers(unittest.TestCase):
         self.assertCountEqual(list(df.columns), expected_columns)
 
         df = get_stats('LaMarcus Aldridge', playoffs=True, career=True)
+        self.assertCountEqual(list(df.columns), expected_columns)
+
+    def test_get_game_logs(self):
+        expected_columns = ['DATE', 'AGE', 'TEAM', 'HOME/AWAY', 'OPPONENT', 'RESULT', 'GS', 'MP', 'FG', 'FGA', 'FG%', '3P', '3PA', '3P%', 'FT', 'FTA', 'FT%', 'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', 'GAME_SCORE', '+/-']
+        df = get_game_logs('Stephen Curry', '2015-10-11', '2016-10-11') 
         self.assertCountEqual(list(df.columns), expected_columns)
 
 
