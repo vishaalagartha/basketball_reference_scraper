@@ -288,45 +288,69 @@ Dates are parsed using Pandas `to_datetime()` method and should follow appropria
 ### Team Abbreviations
 These are the team abbreviations used by Basketball Reference and should be used in the above methods.
 ```
-  Atlanta Hawks : ATL
-  Boston Celtics : BOS
-  Brooklyn Nets : BRK
-  Chicago Bulls : CHI
-  Charlotte Hornets : CHO
-  Cleveland Cavaliers : CLE
-  Dallas Mavericks : DAL
-  Denver Nuggets : DEN
-  Detroit Pistons : DET
-  Golden State Warriors : GSW
-  Houston Rockets : HOU
-  Indiana Pacers : IND
-  Los Angeles Clippers : LAC
-  Los Angeles Lakers : LAL
-  Memphis Grizzlies : MEM
-  Miami Heat : MIA
-  Milwaukee Bucks : MIL
-  Minnesota Timberwolves : MIN
-  New Orleans Pelicans : NOP
-  New York Knicks : NYK
-  Oklahoma City Thunder : OKC
-  Orlando Magic : ORL
-  Philadelphia 76ers : PHI
-  Phoenix Suns : PHO
-  Portland Trail Blazers : POR
-  Sacramento Kings : SAC
-  San Antonio Spurs : SAS
-  Toronto Raptors : TOR
-  Utah Jazz : UTA
-  Washington Wizards : WAS
-
-  # Deprecated Teams
-  New Jersey Nets : NJN
-  New Orleans Hornets : NOH
-  New Orleans Oklahoma City Hornets : NOK
-  Charlotte Bobcats : CHA
-  Charlotte Hornets : CHH
-  Seattle Supersonics : SEA
-  Vancouver Grizzlies : VAN
+ATLANTA HAWKS : ATL
+ST. LOUIS HAWKS : SLH
+MILWAUKEE HAWKS : MIL
+TRI-CITIES BLACKHAWKS : TCB
+BOSTON CELTICS : BOS
+BROOKLYN NETS : BRK
+NEW JERSEY NETS : NJN
+CHICAGO BULLS : CHI
+CHARLOTTE HORNETS : CHO
+CHARLOTTE BOBCATS : CHA
+CLEVELAND CAVALIERS : CLE
+DALLAS MAVERICKS : DAL
+DENVER NUGGETS : DEN
+DETROIT PISTONS : DET
+FORT WAYNE PISTONS : FWP
+GOLDEN STATE WARRIORS : GSW
+SAN FRANCISCO WARRIORS : SFW
+PHILADELPHIA WARRIORS : PHI
+HOUSTON ROCKETS : HOU
+INDIANA PACERS : IND
+LOS ANGELES CLIPPERS : LAC
+SAN DIEGO CLIPPERS : SDC
+BUFFALO BRAVES : BUF
+LOS ANGELES LAKERS : LAL
+MINNEAPOLIS LAKERS : MIN
+MEMPHIS GRIZZLIES : MEM
+VANCOUVER GRIZZLIES : VAN
+MIAMI HEAT : MIA
+MILWAUKEE BUCKS : MIL
+MINNESOTA TIMBERWOLVES : MIN
+NEW ORLEANS PELICANS : NOP
+NEW ORLEANS/OKLAHOMA CITY HORNETS : NOK
+NEW ORLEANS HORNETS : NOH
+NEW YORK KNICKS : NYK
+OKLAHOMA CITY THUNDER : OKC
+SEATTLE SUPERSONICS : SEA
+ORLANDO MAGIC : ORL
+PHILADELPHIA 76ERS : PHI
+SYRACUSE NATIONALS : SYR
+PHOENIX SUNS : PHO
+PORTLAND TRAIL BLAZERS : POR
+SACRAMENTO KINGS : SAC
+KANSAS CITY KINGS : KCK
+KANSAS CITY-OMAHA KINGS : KCK
+CINCINNATI ROYALS : CIN
+ROCHESTER ROYALS : ROR
+SAN ANTONIO SPURS : SAS
+TORONTO RAPTORS : TOR
+UTAH JAZZ : UTA
+NEW ORLEANS JAZZ : NOJ
+WASHINGTON WIZARDS : WAS
+WASHINGTON BULLETS : WAS
+CAPITAL BULLETS : CAP
+BALTIMORE BULLETS : BAL
+CHICAGO ZEPHYRS : CHI
+CHICAGO PACKERS : CHI
+ANDERSON PACKERS : AND
+CHICAGO STAGS : CHI
+INDIANAPOLIS OLYMPIANS : IND
+SHEBOYGAN RED SKINS : SRS
+ST. LOUIS BOMBERS : SLB
+WASHINGTON CAPITOLS : WAS
+WATERLOO HAWKS : WAT
 ```
 
 ### Units
