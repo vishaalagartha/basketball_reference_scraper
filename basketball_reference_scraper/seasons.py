@@ -14,23 +14,24 @@ def get_schedule(season, playoffs=False):
             table = soup.find('table', attrs={'id': 'schedule'})
             month_df = pd.read_html(str(table))[0]
             df = df.append(month_df)
-    df = df.dropna(axis='columns')
     df = df.reset_index()
-    cols_to_remove = [x for x in df.columns if 'Unnamed' in x]
-    cols_to_remove += [y for y in df.columns if 'Start' in y]
-    cols_to_remove += [z for z in df.columns if 'Attend' in z]
+    cols_to_remove = [i for i in df.columns if 'Unnamed' in i]
+    cols_to_remove += [i for i in df.columns if 'Notes' in i]
+    cols_to_remove += [i for i in df.columns if 'Start' in i]
+    cols_to_remove += [i for i in df.columns if 'Attend' in i]
     cols_to_remove += ['index']
     df = df.drop(cols_to_remove, axis=1)
-    df.columns = ['Date', 'Visitor', 'Visitor Pts', 'Home', 'Home Pts']
-    playoff_index = df[df['Date']=='Playoffs'].index[0]
+    df.columns = ['DATE', 'VISITOR', 'VISITOR_PTS', 'HOME', 'HOME_PTS']
+    playoff_loc = df[df['DATE']=='Playoffs']
+    if len(playoff_loc.index)>0:
+        playoff_index = playoff_loc.index[0]
+    else:
+        playoff_index = len(df)
     if playoffs:
         df = df[playoff_index+1:]
     else:
         df = df[:playoff_index]
-    df['Date'] = df['Date'].apply(lambda x: pd.to_datetime(x))
-    df.rename(columns = {'Date': 'DATE', 'Visitor': 'VISITOR', 'Visitor Pts':
-        'VISITOR_PTS', 'Home': 'HOME', 'Home Pts': 'HOME_PTS', 'Attendance':
-        'ATTENDANCE'}, inplace=True)
+    df['DATE'] = df['DATE'].apply(lambda x: pd.to_datetime(x))
     return df
 
 def get_standings(date=None):
