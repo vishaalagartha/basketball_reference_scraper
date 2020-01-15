@@ -89,7 +89,7 @@ Returns:
 Usage
 
 ```
-from basketball_reference_scraper.players import get_stats
+from basketball_reference_scraper.players import get_stats, get_game_logs
 ```
 
 ### `get_stats(name, stat_type='PER_GAME', playoffs=False, career=False)`
@@ -104,6 +104,22 @@ Returns:
 
   A Pandas DataFrame that varies based on the parameters passed.
   Please refer to a [sample page](https://www.basketball-reference.com/players/a/aldrila01.html) for full details.
+
+### `get_game_logs(name, start_date, end_date, playoffs=False)`
+
+Parameters:
+  - `name` - Player full name (e.g. `'LaMarcus Aldridge'`)
+  - `start_date` - Date in string format of `'YYYY-MM-DD'`.
+  - `end_date` - Date in string format of `'YYYY-MM-DD'`.
+  - `playoffs` - Whether to return Playoff stats or not. One of `True|False`. Default value is `False`
+
+Returns:
+
+  A Pandas DataFrame containing the following columns:
+
+  ```
+  ['DATE', 'AGE', 'TEAM', 'HOME/AWAY', 'OPPONENT', 'RESULT', 'GS', 'MP', 'FG', 'FGA', 'FG%', '3P', '3PA', '3P%', 'FT', 'FTA', 'FT%', 'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', 'GAME_SCORE', '+/-']
+  ```
 
 ## Seasons
 

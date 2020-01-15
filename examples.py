@@ -15,10 +15,13 @@ print(s)
 s = get_team_misc('GSW', 2019)
 print(s)
 
-from basketball_reference_scraper.players import get_stats
+from basketball_reference_scraper.players import get_stats, get_game_logs
 
 s = get_stats('Stephen Curry', stat_type='PER_GAME', playoffs=False, career=False)
 print(s)
+
+df = get_game_logs('LeBron James', '2010-01-19', '2014-01-20', playoffs=False)
+print(df)
 
 from basketball_reference_scraper.seasons import get_schedule, get_standings
 
