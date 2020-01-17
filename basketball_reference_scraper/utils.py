@@ -16,7 +16,6 @@ def get_game_suffix(date, team1, team2):
 def get_player_suffix(name):
     names = name.split(' ')[1:]
     for last_name in names:
-        last_name = name.split(' ')[-1]
         initial = last_name[0].lower()
         r = get(f'https://www.basketball-reference.com/players/{initial}')
         if r.status_code==200:
