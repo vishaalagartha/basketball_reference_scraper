@@ -30,9 +30,11 @@ def get_stats(name, stat_type='PER_GAME', playoffs=False, career=False):
 
 def get_game_logs(name, start_date, end_date, playoffs=False):
     suffix = get_player_suffix(name).replace('/', '%2F').replace('.html', '')
+    start_date_str = start_date
+    end_date_str = end_date
     start_date = pd.to_datetime(start_date)
     end_date = pd.to_datetime(end_date)
-    years = list(range(start_date.year, end_date.year+1))
+    years = list(range(start_date.year, end_date.year+2))
     if playoffs:
         selector = 'div_pgl_basic_playoffs'
     else:
@@ -49,6 +51,7 @@ def get_game_logs(name, start_date, end_date, playoffs=False):
             df['HOME/AWAY'] = df['HOME/AWAY'].apply(lambda x: 'AWAY' if x=='@' else 'HOME')
             df = df[df['Rk']!='Rk']
             df = df.drop(['Rk', 'G'], axis=1)
+            df = df.loc[(df['DATE'] >= start_date_str) & (df['DATE'] <= end_date_str)]
             active_df = pd.DataFrame(columns = list(df.columns))
             for index, row in df.iterrows():
                 if len(row['GS'])>1:
