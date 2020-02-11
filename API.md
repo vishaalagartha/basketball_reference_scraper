@@ -25,7 +25,7 @@ Returns:
 Parameters:
   - `team` - NBA team abbreviation (e.g. `'GSW'`, `'SAS'`)
   - `season_end_year` - Desired end year (e.g. `1988`, `2011`)
-  - `data_format` - One of `'TOTAL'|'PER_GAME'|'RANK'|'Y/Y'`. Default value is `'PER_GAME'`
+  - `data_format` - One of `'TOTAL'|'PER_GAME'|'PER_POSS'`. Default value is `'PER_GAME'`
 
 Returns:
 
@@ -42,7 +42,7 @@ Returns:
 Parameters:
   - `team` - NBA team abbreviation (e.g. `'GSW'`, `'SAS'`)
   - `season_end_year` - Desired end year (e.g. `1988`, `2011`)
-  - `data_format` - One of `'TOTAL'|'PER_GAME'|'RANK'|'Y/Y'`. Default value is `'PER_GAME'`
+  - `data_format` - One of `'TOTAL'|'PER_GAME'|'PER_POSS'`. Default value is `'PER_GAME'`
 
 Returns:
 
@@ -58,7 +58,7 @@ Returns:
 Parameters:
   - `team` - NBA team abbreviation (e.g. `'GSW'`, `'SAS'`)
   - `season_end_year` - Desired end year (e.g. `1988`, `2011`)
-  - `data_format` - One of `'TOTALS'|'PER_GAME'|'RANK'|'PER_MINUTE'|'PER_100_POSS'|'ADVANCED'`. Default value is `'PER_GAME'`
+  - `data_format` - One of `'TOTALS'|'PER_GAME'|'PER_MINUTE'|'PER_POSS'|'ADVANCED'`. Default value is `'PER_GAME'`
   - `playoffs` - Whether to return Playoff stats or not. One of `True|False`
 
 Returns:
