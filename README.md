@@ -8,7 +8,7 @@ I wrote this library as an exercise for creating my first PyPi package. Hopefull
 Install using the following command:
 
 ```
-pip install basketball-reference-scraper==v1.0.4
+pip install basketball-reference-scraper
 ```
 
 ### Via GitHub
