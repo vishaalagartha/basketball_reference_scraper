@@ -50,3 +50,8 @@ from basketball_reference_scraper.injury_report import get_injury_report
 
 s = get_injury_report()
 print(s)
+
+from basketball_reference_scraper.players import get_game_logs
+
+df = get_game_logs('Pau Gasol', '2010-01-12', '2010-01-20', playoffs=False)
+print(df)

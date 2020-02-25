@@ -19,6 +19,9 @@ class TestPlayers(unittest.TestCase):
         df = get_game_logs('Stephen Curry', '2015-10-11', '2016-10-11') 
         self.assertCountEqual(list(df.columns), expected_columns)
 
+        df = get_game_logs('Pau Gasol', '2010-01-12', '2010-01-20', playoffs=False)
+        self.assertEqual(len(df), 2)
+
 
 if __name__ == '__main__':
     unittest.main()
