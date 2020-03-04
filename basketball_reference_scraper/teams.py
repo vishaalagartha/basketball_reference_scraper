@@ -38,8 +38,8 @@ def get_team_stats(team, season_end_year, data_format='PER_GAME'):
         df['Team'] = df['Team'].apply(lambda x: x.replace('*', '').upper())
         df['TEAM'] = df['Team'].apply(lambda x: TEAM_TO_TEAM_ABBR[x])
         df = df.drop(['Rk', 'Team'], axis=1)
+        df.loc[:, 'SEASON'] = f'{season_end_year-1}-{str(season_end_year)[2:]}'
         s = df[df['TEAM']==team]
-        s['SEASON'] = f'{season_end_year-1}-{str(season_end_year)[2:]}'
         return pd.Series(index=list(s.columns), data=s.values.tolist()[0])
 
 def get_opp_stats(team, season_end_year, data_format='PER_GAME'):
@@ -62,8 +62,8 @@ def get_opp_stats(team, season_end_year, data_format='PER_GAME'):
         df = df.drop(['Rk', 'Team'], axis=1)
         df.columns = list(map(lambda x: 'OPP_'+x, list(df.columns)))
         df.rename(columns={'OPP_TEAM': 'TEAM'}, inplace=True)
+        df.loc[:, 'SEASON'] = f'{season_end_year-1}-{str(season_end_year)[2:]}'
         s = df[df['TEAM']==team]
-        s['SEASON'] = f'{season_end_year-1}-{str(season_end_year)[2:]}'
         return pd.Series(index=list(s.columns), data=s.values.tolist()[0])
 
 def get_team_misc(team, season_end_year):
@@ -80,8 +80,8 @@ def get_team_misc(team, season_end_year):
         df['TEAM'] = df['Team'].apply(lambda x: TEAM_TO_TEAM_ABBR[x])
         df = df.drop(['Rk', 'Team'], axis=1)
         df.rename(columns = {'Age': 'AGE', 'Pace': 'PACE', 'Arena': 'ARENA', 'Attend.': 'ATTENDANCE', 'Attend./G': 'ATTENDANCE/G'}, inplace=True)
+        df.loc[:, 'SEASON'] = f'{season_end_year-1}-{str(season_end_year)[2:]}'
         s = df[df['TEAM']==team]
-        s['SEASON'] = f'{season_end_year-1}-{str(season_end_year)[2:]}'
         return pd.Series(index=list(s.columns), data=s.values.tolist()[0])
 
 def get_roster_stats(team, season_end_year, data_format='PER_GAME', playoffs=False):
