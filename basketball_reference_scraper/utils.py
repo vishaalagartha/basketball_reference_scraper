@@ -24,6 +24,6 @@ def get_player_suffix(name):
             soup = BeautifulSoup(r.content, 'html.parser')
             for table in soup.find_all('table', attrs={'id': 'players'}):
                 for anchor in table.find_all('a'):
-                    if anchor.text in name:
+                    if unicodedata.normalize('NFD', anchor.text).encode('ascii', 'ignore').decode("utf-8") in name:
                         suffix = anchor.attrs['href']
                         return suffix
