@@ -3,9 +3,9 @@ from requests import get
 from bs4 import BeautifulSoup
 
 try:
-    from constants import TEAM_TO_TEAM_ABBR
+    from constants import TEAM_TO_TEAM_ABBR, TEAM_SETS
 except:
-    from basketball_reference_scraper.constants import TEAM_TO_TEAM_ABBR
+    from basketball_reference_scraper.constants import TEAM_TO_TEAM_ABBR, TEAM_SETS
 
 def get_roster(team, season_end_year):
     r = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Fteams%2F{team}%2F{season_end_year}.html&div=div_roster')
@@ -92,12 +92,16 @@ def get_roster_stats(team, season_end_year, data_format='PER_GAME', playoffs=Fal
     selector = data_format.lower()
     r = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2F{period}%2FNBA_{season_end_year}_{selector}.html&div=div_{selector}_stats')
     df = None
+    possible_teams = [team]
+    for s in TEAM_SETS:
+        if team in s:
+            possible_teams = s
     if r.status_code==200:
         soup = BeautifulSoup(r.content, 'html.parser')
         table = soup.find('table')
         df2 = pd.read_html(str(table))[0]
         for index, row in df2.iterrows():
-            if row['Tm']==team:
+            if row['Tm'] in possible_teams:
                 if df is None:
                     df = pd.DataFrame(columns=list(row.index)+['SEASON'])
                 row['SEASON'] = f'{season_end_year-1}-{str(season_end_year)[2:]}'
