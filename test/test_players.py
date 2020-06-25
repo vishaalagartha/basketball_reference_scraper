@@ -1,5 +1,5 @@
 import unittest
-from basketball_reference_scraper.players import get_stats, get_game_logs
+from basketball_reference_scraper.players import get_stats, get_game_logs, get_player_headshot
 
 class TestPlayers(unittest.TestCase):
     def test_get_stats(self):
@@ -21,6 +21,11 @@ class TestPlayers(unittest.TestCase):
 
         df = get_game_logs('Pau Gasol', '2010-01-12', '2010-01-20', playoffs=False)
         self.assertEqual(len(df), 2)
+
+    def test_get_player_headshot(self):
+        expected_url = 'https://d2cwpp38twqe55.cloudfront.net/req/202006192/images/players/bryanko01.jpg'
+        url = get_player_headshot('Kobe Bryant')
+        self.assertEqual(url, expected_url)
 
 
 if __name__ == '__main__':

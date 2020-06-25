@@ -19,6 +19,13 @@ def get_stats(name, stat_type='PER_GAME', playoffs=False, career=False):
         df = pd.read_html(str(table))[0]
         df.rename(columns={'Season': 'SEASON', 'Age': 'AGE',
                   'Tm': 'TEAM', 'Lg': 'LEAGUE', 'Pos': 'POS'}, inplace=True)
+        if 'FG.1' in df.columns:
+            df.rename(columns={'FG.1': 'FG%'}, inplace=True)
+        if 'eFG' in df.columns:
+            df.rename(columns={'eFG': 'eFG%'}, inplace=True)
+        if 'FT.1' in df.columns:
+            df.rename(columns={'FT.1': 'FT%'}, inplace=True)
+
         career_index = df[df['SEASON']=='Career'].index[0]
         if career:
             df = df.iloc[career_index+2:, :]
@@ -62,3 +69,9 @@ def get_game_logs(name, start_date, end_date, playoffs=False):
                     final_df = pd.DataFrame(columns=list(active_df.columns))
                 final_df = final_df.append(active_df)
     return final_df
+
+def get_player_headshot(name):
+    suffix = get_player_suffix(name)
+    jpg = suffix.split('/')[-1].replace('html', 'jpg')
+    url = 'https://d2cwpp38twqe55.cloudfront.net/req/202006192/images/players/'+jpg
+    return url

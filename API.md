@@ -89,7 +89,7 @@ Returns:
 Usage
 
 ```
-from basketball_reference_scraper.players import get_stats, get_game_logs
+from basketball_reference_scraper.players import get_stats, get_game_logs, get_player_headshot
 ```
 
 ### `get_stats(name, stat_type='PER_GAME', playoffs=False, career=False)`
@@ -120,6 +120,15 @@ Returns:
   ```
   ['DATE', 'AGE', 'TEAM', 'HOME/AWAY', 'OPPONENT', 'RESULT', 'GS', 'MP', 'FG', 'FGA', 'FG%', '3P', '3PA', '3P%', 'FT', 'FTA', 'FT%', 'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', 'GAME_SCORE', '+/-']
   ```
+
+### `get_player_headshot(name)`
+
+Parameters:
+  - `name` - Player full name (e.g. `'LaMarcus Aldridge'`)
+
+Returns:
+  A url that points to the Basketball Reference headshot of the individual player. For example, if `name = 'Kobe Bryant'`, the resulting url is `'https://d2cwpp38twqe55.cloudfront.net/req/202006192/images/players/bryanko01.jpg'`
+
 
 ## Seasons
 
