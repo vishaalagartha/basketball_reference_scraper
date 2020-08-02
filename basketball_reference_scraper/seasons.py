@@ -6,6 +6,9 @@ from bs4 import BeautifulSoup
 def get_schedule(season, playoffs=False):
     months = ['October', 'November', 'December', 'January', 'February', 'March',
             'April', 'May']
+    if season==2020:
+        months = ['October', 'November', 'December', 'January', 'February', 'March'
+                'July', 'August']
     df = pd.DataFrame()
     for month in months:
         r = get(f'https://www.basketball-reference.com/leagues/NBA_{season}_games-{month.lower()}.html')
