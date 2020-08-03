@@ -23,7 +23,12 @@ def get_player_suffix(name):
         if r.status_code==200:
             soup = BeautifulSoup(r.content, 'html.parser')
             for table in soup.find_all('table', attrs={'id': 'players'}):
+                suffixes = []
                 for anchor in table.find_all('a'):
                     if anchor.text in name:
                         suffix = anchor.attrs['href']
-                        return suffix
+                        suffixes.append(suffix)
+                if len(suffixes)==2 and 'Jr' in name:
+                    return suffixes[1]
+                elif len(suffixes)==1:
+                    return suffixes[0]
