@@ -27,8 +27,9 @@ def get_player_suffix(name):
                 for anchor in table.find_all('a'):
                     if anchor.text in name:
                         suffix = anchor.attrs['href']
-                        suffixes.append(suffix)
-                if len(suffixes)==2 and 'Jr' in name:
-                    return suffixes[1]
-                elif len(suffixes)==1:
-                    return suffixes[0]
+                        player_r = get(f'https://www.basketball-reference.com{suffix}')
+                        if player_r.status_code==200:
+                            player_soup = BeautifulSoup(player_r.content, 'html.parser')
+                            page_name = player_soup.find('h1', attrs={'itemprop': 'name'}).find('span').text
+                            if page_name==name:
+                                return suffix
