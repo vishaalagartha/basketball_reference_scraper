@@ -8,7 +8,7 @@ except:
     from basketball_reference_scraper.constants import TEAM_TO_TEAM_ABBR, TEAM_SETS
 
 def get_roster(team, season_end_year):
-    r = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Fteams%2F{team}%2F{season_end_year}.html&div=div_roster')
+    r = get(f'https://www.basketball-reference.com/teams/{team}/{season_end_year}.html')
     df = None
     if r.status_code==200:
         soup = BeautifulSoup(r.content, 'html.parser')
