@@ -25,7 +25,7 @@ def get_player_suffix(name):
             for table in soup.find_all('table', attrs={'id': 'players'}):
                 suffixes = []
                 for anchor in table.find_all('a'):
-                    if anchor.text in name:
+                    if unicodedata.normalize('NFD', anchor.text).encode('ascii', 'ignore').decode("utf-8") in name:
                         suffix = anchor.attrs['href']
                         player_r = get(f'https://www.basketball-reference.com{suffix}')
                         if player_r.status_code==200:
