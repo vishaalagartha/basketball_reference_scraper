@@ -25,11 +25,12 @@ def get_player_suffix(name):
             for table in soup.find_all('table', attrs={'id': 'players'}):
                 suffixes = []
                 for anchor in table.find_all('a'):
-                    if unicodedata.normalize('NFD', anchor.text).encode('ascii', 'ignore').decode("utf-8") in name:
+                    if unicodedata.normalize('NFD', anchor.text).encode('ascii', 'ignore').decode("utf-8").lower() in name.lower():
                         suffix = anchor.attrs['href']
                         player_r = get(f'https://www.basketball-reference.com{suffix}')
                         if player_r.status_code==200:
                             player_soup = BeautifulSoup(player_r.content, 'html.parser')
                             page_name = player_soup.find('h1', attrs={'itemprop': 'name'}).find('span').text
-                            if page_name==name:
+                            if page_name.lower()==name.lower():
                                 return suffix
+
