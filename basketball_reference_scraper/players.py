@@ -32,7 +32,7 @@ def get_stats(name, stat_type='PER_GAME', playoffs=False, career=False):
         else:
             df = df.iloc[:career_index, :]
 
-        df = df.reset_index().dropna(axis=1).drop('index', axis=1)
+        df = df.reset_index().drop('index', axis=1)
         return df
 
 def get_game_logs(name, start_date, end_date, playoffs=False):
