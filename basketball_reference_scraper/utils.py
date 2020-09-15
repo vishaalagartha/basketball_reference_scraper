@@ -30,7 +30,9 @@ def get_player_suffix(name):
                         player_r = get(f'https://www.basketball-reference.com{suffix}')
                         if player_r.status_code==200:
                             player_soup = BeautifulSoup(player_r.content, 'html.parser')
-                            page_name = player_soup.find('h1', attrs={'itemprop': 'name'}).find('span').text
-                            if page_name.lower()==name.lower():
-                                return suffix
+                            h1 = player_soup.find('h1', attrs={'itemprop': 'name'})
+                            if h1:
+                                page_name = h1.find('span').text
+                                if page_name.lower()==name.lower():
+                                    return suffix
 
