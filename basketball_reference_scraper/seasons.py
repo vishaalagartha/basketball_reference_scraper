@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 
 def get_schedule(season, playoffs=False):
     months = ['October', 'November', 'December', 'January', 'February', 'March',
-            'April', 'May']
+            'April', 'May', 'June']
     if season==2020:
         months = ['October', 'November', 'December', 'January', 'February', 'March'
                 'July', 'August']
