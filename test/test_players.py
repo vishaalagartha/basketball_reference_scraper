@@ -8,7 +8,6 @@ class TestPlayers(unittest.TestCase):
         self.assertCountEqual(list(df.columns), expected_columns)
 
         df = get_stats('LaMarcus Aldridge', career=True)
-        expected_columns = ['SEASON', 'TEAM', 'LEAGUE', 'G', 'GS', 'MP', 'FG', 'FGA', 'FG%', '3P', '3PA', '3P%', '2P', '2PA', '2P%', 'eFG%', 'FT', 'FTA', 'FT%', 'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS']
         self.assertCountEqual(list(df.columns), expected_columns)
 
         df = get_stats('LaMarcus Aldridge', playoffs=True, career=True)
