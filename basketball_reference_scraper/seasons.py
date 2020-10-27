@@ -8,7 +8,7 @@ def get_schedule(season, playoffs=False):
             'April', 'May', 'June']
     if season==2020:
         months = ['October', 'November', 'December', 'January', 'February', 'March'
-                'July', 'August']
+                'July', 'August', 'September', 'October']
     df = pd.DataFrame()
     for month in months:
         r = get(f'https://www.basketball-reference.com/leagues/NBA_{season}_games-{month.lower()}.html')
@@ -25,16 +25,31 @@ def get_schedule(season, playoffs=False):
     cols_to_remove += ['index']
     df = df.drop(cols_to_remove, axis=1)
     df.columns = ['DATE', 'VISITOR', 'VISITOR_PTS', 'HOME', 'HOME_PTS']
-    playoff_loc = df[df['DATE']=='Playoffs']
-    if len(playoff_loc.index)>0:
-        playoff_index = playoff_loc.index[0]
+    if season==2020:
+        df = df[df['DATE']!='Playoffs']
+        df['DATE'] = df['DATE'].apply(lambda x: pd.to_datetime(x))
+        df = df.sort_values(by='DATE')
+        df = df.reset_index().drop('index', axis=1)
+        playoff_loc = df[df['DATE']==pd.to_datetime('2020-08-17')].head(n=1)
+        if len(playoff_loc.index)>0:
+            playoff_index = playoff_loc.index[0]
+        else:
+            playoff_index = len(df)
+        if playoffs:
+            df = df[playoff_index:]
+        else:
+            df = df[:playoff_index]
     else:
-        playoff_index = len(df)
-    if playoffs:
-        df = df[playoff_index+1:]
-    else:
-        df = df[:playoff_index]
-    df['DATE'] = df['DATE'].apply(lambda x: pd.to_datetime(x))
+        playoff_loc = df[df['DATE']=='Playoffs']
+        if len(playoff_loc.index)>0:
+            playoff_index = playoff_loc.index[0]
+        else:
+            playoff_index = len(df)
+        if playoffs:
+            df = df[playoff_index+1:]
+        else:
+            df = df[:playoff_index]
+        df['DATE'] = df['DATE'].apply(lambda x: pd.to_datetime(x))
     return df
 
 def get_standings(date=None):
