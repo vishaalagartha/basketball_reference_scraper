@@ -62,11 +62,14 @@ def get_standings(date=None):
     if r.status_code==200:
         soup = BeautifulSoup(r.content, 'html.parser')
         e_table = soup.find('table', attrs={'id': 'standings_e'})
-        e_df = pd.read_html(str(e_table))[0]
         w_table = soup.find('table', attrs={'id': 'standings_w'})
-        w_df = pd.read_html(str(w_table))[0]
-        e_df.rename(columns={'Eastern Conference': 'TEAM'}, inplace=True)
-        w_df.rename(columns={'Western Conference': 'TEAM'}, inplace=True)
+        e_df = pd.DataFrame(columns =  ['TEAM', 'W', 'L', 'W/L%', 'GB', 'PW', 'PL', 'PS/G', 'PA/G'])
+        w_df = pd.DataFrame(columns =  ['TEAM', 'W', 'L', 'W/L%', 'GB', 'PW', 'PL', 'PS/G', 'PA/G'])
+        if e_table and w_table:
+            e_df = pd.read_html(str(e_table))[0]
+            w_df = pd.read_html(str(w_table))[0]
+            e_df.rename(columns={'Eastern Conference': 'TEAM'}, inplace=True)
+            w_df.rename(columns={'Western Conference': 'TEAM'}, inplace=True)
         d['EASTERN_CONF'] = e_df
         d['WESTERN_CONF'] = w_df
     return d
