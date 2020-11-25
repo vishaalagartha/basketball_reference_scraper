@@ -20,7 +20,7 @@ def get_roster(team, season_end_year):
                         'NATIONALITY', 'EXPERIENCE', 'COLLEGE']
         df['PLAYER'] = df['PLAYER'].apply(lambda name: remove_accents(name, team, season_end_year))
         df['BIRTH_DATE'] = df['BIRTH_DATE'].apply(lambda x: pd.to_datetime(x))
-        df['NATIONALITY'] = df['NATIONALITY'].apply(lambda x: x.upper())
+        df['NATIONALITY'] = df['NATIONALITY'].str.upper()
     return df
 
 def get_team_stats(team, season_end_year, data_format='PER_GAME'):

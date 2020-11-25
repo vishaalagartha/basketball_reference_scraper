@@ -12,6 +12,14 @@ class TestTeams(unittest.TestCase):
 
         self.assertListEqual(list(df.columns), expected_columns) 
 
+    def test_get_roster_on_missing_nationality(self):
+        df = get_roster('FTW', 1956)
+
+        expected_columns = ['NUMBER', 'PLAYER', 'POS', 'HEIGHT', 'WEIGHT',
+                'BIRTH_DATE', 'NATIONALITY', 'EXPERIENCE', 'COLLEGE']
+
+        self.assertListEqual(list(df.columns), expected_columns)
+
     def get_team_stats(self):
         series = get_team_stats('GSW', 2019)
         expected_indices = ['G', 'MP', 'FG', 'FGA', 'FG%', '3P', '3PA', '3P%', '2P', '2PA', '2P%', 'FT', 'FTA', 'FT%', 'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS']
