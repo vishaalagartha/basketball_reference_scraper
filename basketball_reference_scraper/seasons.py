@@ -7,8 +7,8 @@ def get_schedule(season, playoffs=False):
     months = ['October', 'November', 'December', 'January', 'February', 'March',
             'April', 'May', 'June']
     if season==2020:
-        months = ['October', 'November', 'December', 'January', 'February', 'March'
-                'July', 'August', 'September', 'October']
+        months = ['October-2019', 'November', 'December', 'January', 'February', 'March'
+                'July', 'August', 'September', 'October-2020']
     df = pd.DataFrame()
     for month in months:
         r = get(f'https://www.basketball-reference.com/leagues/NBA_{season}_games-{month.lower()}.html')
