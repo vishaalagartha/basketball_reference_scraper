@@ -4,10 +4,13 @@ from bs4 import BeautifulSoup
 
 try:
     from utils import get_player_suffix
+    from lookup import lookup
 except:
     from basketball_reference_scraper.utils import get_player_suffix
+    from basketball_reference_scraper.lookup import lookup
 
-def get_stats(name, stat_type='PER_GAME', playoffs=False, career=False):
+def get_stats(_name, stat_type='PER_GAME', playoffs=False, career=False):
+    name = lookup(_name)
     suffix = get_player_suffix(name).replace('/', '%2F')
     selector = stat_type.lower()
     if playoffs:
@@ -35,7 +38,8 @@ def get_stats(name, stat_type='PER_GAME', playoffs=False, career=False):
         df = df.reset_index().drop('index', axis=1)
         return df
 
-def get_game_logs(name, start_date, end_date, playoffs=False):
+def get_game_logs(_name, start_date, end_date, playoffs=False):
+    name = lookup(_name)
     suffix = get_player_suffix(name).replace('/', '%2F').replace('.html', '')
     start_date_str = start_date
     end_date_str = end_date
@@ -70,7 +74,8 @@ def get_game_logs(name, start_date, end_date, playoffs=False):
                 final_df = final_df.append(active_df)
     return final_df
 
-def get_player_headshot(name):
+def get_player_headshot(_name):
+    name = lookup(_name)
     suffix = get_player_suffix(name)
     jpg = suffix.split('/')[-1].replace('html', 'jpg')
     url = 'https://d2cwpp38twqe55.cloudfront.net/req/202006192/images/players/'+jpg
