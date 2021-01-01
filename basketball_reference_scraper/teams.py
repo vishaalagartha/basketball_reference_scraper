@@ -18,9 +18,13 @@ def get_roster(team, season_end_year):
         df = pd.read_html(str(table))[0]
         df.columns = ['NUMBER', 'PLAYER', 'POS', 'HEIGHT', 'WEIGHT', 'BIRTH_DATE',
                         'NATIONALITY', 'EXPERIENCE', 'COLLEGE']
+        # remove rows with no player name (this was the issue above)
+        df = df[df['PLAYER'].notna()]
         df['PLAYER'] = df['PLAYER'].apply(lambda name: remove_accents(name, team, season_end_year))
-        df['BIRTH_DATE'] = df['BIRTH_DATE'].apply(lambda x: pd.to_datetime(x))
-        df['NATIONALITY'] = df['NATIONALITY'].str.upper()
+        # handle rows with empty fields but with a player name.
+        df['BIRTH_DATE'] = df['BIRTH_DATE'].apply(lambda x: pd.to_datetime(x) if pd.notna(x) else pd.NaT)
+        df['NATIONALITY'] = df['NATIONALITY'].apply(lambda x: x.upper() if pd.notna(x) else '')
+
     return df
 
 def get_team_stats(team, season_end_year, data_format='PER_GAME'):
