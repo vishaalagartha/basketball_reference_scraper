@@ -27,7 +27,7 @@ def levenshtein(s1, s2, maximum):
     returned. If many matches are found, either identical or distanced, all
     are returned for final user approval.
 """
-def lookup(player):
+def lookup(player, ask_matches = True):
     path = os.path.join(os.path.dirname(__file__), 'br_names.txt')
     normalized = unidecode.unidecode(player)
     matches = []
@@ -49,7 +49,7 @@ def lookup(player):
         otherwise, return list of likely candidates and allow
         the user to confirm specifiy their selection.
     """
-    if len(matches) == 1:
+    if len(matches) == 1 or ask_matches == False:
         print("You searched for \"{}\"\n{} result found.\n{}".format(player, len(matches), matches[0][0]))
         print("Results for {}:\n".format(matches[0][0]))
         return matches[0][0]

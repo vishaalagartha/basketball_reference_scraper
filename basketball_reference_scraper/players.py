@@ -9,8 +9,8 @@ except:
     from basketball_reference_scraper.utils import get_player_suffix
     from basketball_reference_scraper.lookup import lookup
 
-def get_stats(_name, stat_type='PER_GAME', playoffs=False, career=False):
-    name = lookup(_name)
+def get_stats(_name, stat_type='PER_GAME', playoffs=False, career=False, ask_matches = True):
+    name = lookup(_name, ask_matches)
     suffix = get_player_suffix(name).replace('/', '%2F')
     selector = stat_type.lower()
     if playoffs:
