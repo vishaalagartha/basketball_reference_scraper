@@ -50,10 +50,10 @@ def lookup(player, ask_matches = True):
         the user to confirm specifiy their selection.
     """
     if len(matches) == 1 or ask_matches == False:
-        print("You searched for \"{}\"\n{} result found.\n{}".format(player, len(matches), matches[0][0]))
-        print("Results for {}:\n".format(matches[0][0]))
         if len(matches) > 1:
             matches.sort(key=lambda tup: tup[1])
+        print("You searched for \"{}\"\n{} result found.\n{}".format(player, len(matches), matches[0][0]))
+        print("Results for {}:\n".format(matches[0][0]))
         return matches[0][0]
 
     elif len(matches) > 1:
