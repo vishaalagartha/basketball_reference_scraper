@@ -38,8 +38,8 @@ def get_stats(_name, stat_type='PER_GAME', playoffs=False, career=False, ask_mat
         df = df.reset_index().drop('index', axis=1)
         return df
 
-def get_game_logs(_name, start_date, end_date, playoffs=False):
-    name = lookup(_name)
+def get_game_logs(_name, start_date, end_date, playoffs=False, ask_matches=True):
+    name = lookup(_name, ask_matches)
     suffix = get_player_suffix(name).replace('/', '%2F').replace('.html', '')
     start_date_str = start_date
     end_date_str = end_date
