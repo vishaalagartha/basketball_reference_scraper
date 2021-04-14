@@ -289,6 +289,26 @@ Returns:
   ['PLAYER', 'TEAM', 'DATE', 'INJURY', 'STATUS', 'DESCRIPTION']
   ```
 
+## Draft
+
+Usage
+
+```
+from basketball_reference_scraper.drafts import get_draft_class
+```
+
+### `get_draft_class(year)`
+
+Parameters:
+  - `year` - Desired draft year (e.g. 1989, 2020)
+
+Returns:
+
+  A Pandas DataFrame with the following columns:
+  ```
+  ['PICK', 'TEAM', 'PLAYER', 'COLLEGE', 'YEARS', 'TOTALS_G', 'TOTALS_MP', 'TOTALS_PTS', 'TOTALS_TRB', 'TOTALS_AST', 'SHOOTING_FG%', 'SHOOTING_3P%', 'SHOOTING_FT%', 'PER_GAME_MP', 'PER_GAME_PTS', 'PER_GAME_TRB', 'PER_GAME_AST', 'ADVANCED_WS', 'ADVANCED_WS/48', 'ADVANCED_BPM', 'ADVANCED_VORP']
+  ```
+
 ## Constants and Parameter Notes
 
 ### Dates

@@ -58,3 +58,8 @@ print(df)
 
 url = get_player_headshot('Kobe Bryant')
 print(url)
+
+from basketball_reference_scraper.drafts import get_draft_class
+
+df = get_draft_class(2003)
+print(df)
