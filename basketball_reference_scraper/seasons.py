@@ -41,6 +41,9 @@ def get_schedule(season, playoffs=False):
         else:
             df = df[:playoff_index]
     else:
+        # account for 1953 season where there's more than one "playoffs" header
+        if season == 1953:
+            df.drop_duplicates(subset=['DATE', 'HOME', 'VISITOR'], inplace=True)
         playoff_loc = df[df['DATE']=='Playoffs']
         if len(playoff_loc.index)>0:
             playoff_index = playoff_loc.index[0]

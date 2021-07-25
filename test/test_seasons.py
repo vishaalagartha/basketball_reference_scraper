@@ -10,10 +10,11 @@ class TestSeason(unittest.TestCase):
 
     def test_get_schedule_weird_season(self):
         for season in (1971, 1953):
-            cur_season = get_schedule(season)
-            expected_columns = ['DATE', 'VISITOR', 'VISITOR_PTS', 'HOME',
-                    'HOME_PTS']
-            self.assertListEqual(list(cur_season.columns), expected_columns)
+            for use_playoffs in (True, False):
+                cur_season = get_schedule(season, playoffs=use_playoffs)
+                expected_columns = ['DATE', 'VISITOR', 'VISITOR_PTS', 'HOME',
+                        'HOME_PTS']
+                self.assertListEqual(list(cur_season.columns), expected_columns)
 
     def test_get_standings(self):
         d = get_standings()
