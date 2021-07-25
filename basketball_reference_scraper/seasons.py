@@ -15,8 +15,9 @@ def get_schedule(season, playoffs=False):
         if r.status_code==200:
             soup = BeautifulSoup(r.content, 'html.parser')
             table = soup.find('table', attrs={'id': 'schedule'})
-            month_df = pd.read_html(str(table))[0]
-            df = df.append(month_df)
+            if table:
+                month_df = pd.read_html(str(table))[0]
+                df = df.append(month_df)
     df = df.reset_index()
     cols_to_remove = [i for i in df.columns if 'Unnamed' in i]
     cols_to_remove += [i for i in df.columns if 'Notes' in i]
