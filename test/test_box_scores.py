@@ -15,13 +15,11 @@ class TestBoxScores(unittest.TestCase):
         df = d['Team LeBron']
         # they dont record +/- in ASG :(
         expected_columns = ['PLAYER', 'TEAM', 'MP', 'FG', 'FGA', 'FG%', '3P', '3PA', '3P%', 'FT', 'FTA', 'FT%', 'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS']
-        for item in df.columns:
-            if item not in expected_columns:
-                print(item) 
         self.assertSetEqual(set(df.columns), set(expected_columns))
 
         # check for one of the dnp players
         self.assertTrue('Damian Lillard' in df['PLAYER'].values)
+
         d2 = get_all_star_box_score(1980)
         df = d2['East']
         # check uniqueness of all star names
