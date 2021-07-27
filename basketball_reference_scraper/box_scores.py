@@ -86,7 +86,7 @@ def get_all_star_box_score(year: int):
             if dnp not in res[as_team]['PLAYER'].values:
                 # infer the added player's real team 
                 stats_df = get_stats(dnp, ask_matches=False)
-                team = stats_df.query(f'SEASON == {year-1}-{year}').head(1)['TEAM']
+                team = stats_df[stats_df['SEASON'] == f'{year-1}-{str(year)[-2:]}'].head(1)['TEAM'].values[0]
                 new_row = {'PLAYER': dnp, 'TEAM': team}
                 # set players allstar team from regexp
                 res[as_team] = res[as_team].append(new_row, ignore_index=True)

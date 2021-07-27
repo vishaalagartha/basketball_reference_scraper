@@ -19,6 +19,8 @@ class TestBoxScores(unittest.TestCase):
 
         # check for one of the dnp players
         self.assertTrue('Damian Lillard' in df['PLAYER'].values)
+        # make sure his team is right
+        self.assertTrue('POR' in df['TEAM'].values)
 
         d2 = get_all_star_box_score(1980)
         df = d2['East']
