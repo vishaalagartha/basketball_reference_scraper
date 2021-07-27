@@ -26,9 +26,6 @@ class TestBoxScores(unittest.TestCase):
         df = d2['East']
         # check uniqueness of all star names
         expected_players = ['George Gervin', 'Eddie Johnson', 'Moses Malone', 'Julius Erving', 'John Drew', 'Elvin Hayes', 'Dan Roundfield', 'Larry Bird', 'Tiny Archibald', 'Bill Cartwright', 'Micheal Ray Richardson', 'Dave Cowens']
-        for player in df['PLAYER'].values:
-            if player not in df['PLAYER'].values:
-                print(player)
         self.assertListEqual(expected_players, list(df['PLAYER'].values))
 
 if __name__ == '__main__':
