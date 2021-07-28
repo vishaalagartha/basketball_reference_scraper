@@ -194,6 +194,20 @@ Returns:
   >>> list(d['ATL'].columns)
   ['PLAYER', 'MP', 'FG', 'FGA', 'FG%', '3P', '3PA', '3P%', 'FT', 'FTA', 'FT%', 'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', '+/-']
   ```
+### `get_all_star_box_score(year: int)`
+
+Parameters:
+  - `year` - End year of game in which all-star season ocurred e.g. 2020 for the 2019-20 ASG 
+
+Returns:
+
+  A dictionary containing relevant stats for each team as a Pandas DataFrame. For example:
+
+  ```
+  >>> d = get_all_star_box_score(2020)
+  >>> list(d['Team Lebron'].columns)
+  ['PLAYER', 'TEAM', 'MP', 'FG', 'FGA', 'FG%', '3P', '3PA', '3P%', 'FT', 'FTA', 'FT%', 'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS']
+  ```
 
 ## Play-by-play
 
