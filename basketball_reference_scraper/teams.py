@@ -35,11 +35,11 @@ def get_roster(team, season_end_year):
 
 def get_team_stats(team, season_end_year, data_format='PER_GAME'):
     if data_format == 'TOTAL':
-        selector = 'div_team-stats-base'
+        selector = 'div_totals-team'
     elif data_format == 'PER_GAME':
-        selector = 'div_team-stats-per_game'
+        selector = 'div_per_game-team'
     elif data_format == 'PER_POSS':
-        selector = 'div_team-stats-per_poss'
+        selector = 'div_per_poss-team'
     r = get(
         f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Fleagues%2FNBA_{season_end_year}.html&div={selector}')
     df = None
@@ -59,11 +59,11 @@ def get_team_stats(team, season_end_year, data_format='PER_GAME'):
 
 def get_opp_stats(team, season_end_year, data_format='PER_GAME'):
     if data_format == 'TOTAL':
-        selector = 'div_opponent-stats-base'
+        selector = 'div_totals-team'
     elif data_format == 'PER_GAME':
-        selector = 'div_opponent-stats-per_game'
+        selector = 'div_per_game-team'
     elif data_format == 'PER_POSS':
-        selector = 'div_opponent-stats-per_poss'
+        selector = 'div_per_poss-team'
     r = get(
         f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Fleagues%2FNBA_{season_end_year}.html&div={selector}')
     df = None
