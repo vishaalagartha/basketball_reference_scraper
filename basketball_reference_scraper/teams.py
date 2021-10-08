@@ -82,10 +82,10 @@ def get_opp_stats(team, season_end_year, data_format='PER_GAME'):
         s = df[df['TEAM'] == team]
         return pd.Series(index=list(s.columns), data=s.values.tolist()[0])
 
-## FIXME: GET URL does not return usable html. Consequently soup.find("table") returns None
+
 def get_team_misc(team, season_end_year):
     r = get(
-        f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Fleagues%2FNBA_{season_end_year}.html&div=div_misc_stats')
+        f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Fleagues%2FNBA_{season_end_year}.html&div=div_advanced-team')
     df = None
     if r.status_code == 200:
         soup = BeautifulSoup(r.content, 'html.parser')
@@ -101,6 +101,7 @@ def get_team_misc(team, season_end_year):
                   'Attend.': 'ATTENDANCE', 'Attend./G': 'ATTENDANCE/G'}, inplace=True)
         df.loc[:, 'SEASON'] = f'{season_end_year-1}-{str(season_end_year)[2:]}'
         s = df[df['TEAM'] == team]
+        s = s.loc[:, ~s.columns.str.contains('^Unnamed')]
         return pd.Series(index=list(s.columns), data=s.values.tolist()[0])
 
 
