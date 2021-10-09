@@ -59,11 +59,11 @@ def get_team_stats(team, season_end_year, data_format='PER_GAME'):
 
 def get_opp_stats(team, season_end_year, data_format='PER_GAME'):
     if data_format == 'TOTAL':
-        selector = 'div_totals-team'
+        selector = 'div_totals-opponent'
     elif data_format == 'PER_GAME':
-        selector = 'div_per_game-team'
+        selector = 'div_per_game-opponent'
     elif data_format == 'PER_POSS':
-        selector = 'div_per_poss-team'
+        selector = 'div_per_poss-opponent'
     r = get(
         f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Fleagues%2FNBA_{season_end_year}.html&div={selector}')
     df = None
