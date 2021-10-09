@@ -31,7 +31,8 @@ setuptools.setup(
         'pytz==2019.3',
         'requests==2.22.0',
         'six==1.13.0',
-        'soupsieve==1.9.5'
+        'soupsieve==1.9.5',
+        'unidecode==1.2.0'
     ],
     extras_require={
         'test': ['unittest'],
