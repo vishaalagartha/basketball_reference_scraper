@@ -22,19 +22,12 @@ def get_game_suffix(date, team1, team2):
     catalogue. Added functionality so that players with abbreviated names
     can still have a suffix created.
 """
-def create_suffix(name):
-    normalized_name = unicodedata.normalize('NFD', name.replace(".","")).encode('ascii', 'ignore').decode("utf-8")
-    first = unidecode.unidecode(normalized_name[:2].lower())
-    lasts = normalized_name.split(' ')[1:]
-    names = ''.join(lasts)
-    second = ""
-    if len(names) <= 5:
-        second += names[:].lower()
-
+def create_last_name_part_of_suffix(potential_last_names):
+    last_names = ''.join(potential_last_names)
+    if len(last_names) <= 5:
+        return last_names[:].lower()
     else:
-        second += names[:5].lower()
-
-    return second+first
+        return last_names[:5].lower()
 
 """
     Amended version of the original suffix function--it now creates all
@@ -53,9 +46,27 @@ def create_suffix(name):
 """
 def get_player_suffix(name):
     normalized_name = unidecode.unidecode(unicodedata.normalize('NFD', name).encode('ascii', 'ignore').decode("utf-8"))
-    initial = normalized_name.split(' ')[1][0].lower()
-    suffix = '/players/'+initial+'/'+create_suffix(name)+'01.html'
+    if normalized_name == 'Metta World Peace' :
+        suffix = '/players/a/artesro01.html'
+    else:
+        split_normalized_name = normalized_name.split(' ')
+        if len(split_normalized_name) < 2:
+            return None
+        initial = normalized_name.split(' ')[1][0].lower()
+        all_names = name.split(' ')
+        first_name_part = unidecode.unidecode(all_names[0][:2].lower())
+        first_name = all_names[0]
+        other_names = all_names[1:]
+        other_names_search = other_names
+        last_name_part = create_last_name_part_of_suffix(other_names)
+        suffix = '/players/'+initial+'/'+last_name_part+first_name_part+'01.html'
     player_r = get(f'https://www.basketball-reference.com{suffix}')
+    while player_r.status_code == 404:
+        other_names_search.pop(0)
+        last_name_part = create_last_name_part_of_suffix(other_names_search)
+        initial = last_name_part[0].lower()
+        suffix = '/players/'+initial+'/'+last_name_part+first_name_part+'01.html'
+        player_r = get(f'https://www.basketball-reference.com{suffix}')
     while player_r.status_code==200:
         player_soup = BeautifulSoup(player_r.content, 'html.parser')
         h1 = player_soup.find('h1', attrs={'itemprop': 'name'})
@@ -70,7 +81,14 @@ def get_player_suffix(name):
             if ((unidecode.unidecode(page_name)).lower() == normalized_name.lower()):
                 return suffix
             else:
-                suffix = suffix[:-6] + str(int(suffix[-6])+1) + suffix[-5:]
+                page_names = unidecode.unidecode(page_name).lower().split(' ')
+                page_first_name = page_names[0]
+                if first_name.lower() == page_first_name.lower():
+                    return suffix
+                other_names_search.pop(0)
+                last_name_part = create_last_name_part_of_suffix(other_names_search)
+                initial = last_name_part[0].lower()
+                suffix = '/players/'+initial+'/'+last_name_part+first_name_part+'01.html'
                 player_r = get(f'https://www.basketball-reference.com{suffix}')
 
     return None

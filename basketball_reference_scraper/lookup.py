@@ -60,10 +60,11 @@ def lookup(player, ask_matches = True):
         print("You searched for \"{}\"\n{} results found.".format(player, len(matches)))
         matches.sort(key=lambda tup: tup[1])
         i = 0
+        return matches[0][0]
         for match in matches:
             print("{}: {}".format(i, match[0])) 
             i += 1           
-        
+                
         selection = int(input("Pick one: "))
         print("Results for {}:\n".format(matches[selection][0]))
         return matches[selection][0]

@@ -11,7 +11,11 @@ except:
 
 def get_stats(_name, stat_type='PER_GAME', playoffs=False, career=False, ask_matches = True):
     name = lookup(_name, ask_matches)
-    suffix = get_player_suffix(name).replace('/', '%2F')
+    suffix = get_player_suffix(name)
+    if suffix:
+        suffix = suffix.replace('/', '%2F')
+    else:
+        return pd.DataFrame()
     selector = stat_type.lower()
     if playoffs:
         selector = 'playoffs_'+selector
@@ -19,6 +23,8 @@ def get_stats(_name, stat_type='PER_GAME', playoffs=False, career=False, ask_mat
     if r.status_code==200:
         soup = BeautifulSoup(r.content, 'html.parser')
         table = soup.find('table')
+        if table is None:
+            return pd.DataFrame()
         df = pd.read_html(str(table))[0]
         df.rename(columns={'Season': 'SEASON', 'Age': 'AGE',
                   'Tm': 'TEAM', 'Lg': 'LEAGUE', 'Pos': 'POS'}, inplace=True)
