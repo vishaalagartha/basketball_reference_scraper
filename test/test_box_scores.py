@@ -23,7 +23,8 @@ class TestBoxScores(unittest.TestCase):
         self.assertTrue('POR' in df['TEAM'].values)
 
         d = get_all_star_box_score(2012)
-        print(d)
+        df = d['East']
+        self.assertSetEqual(set(df.columns), set(expected_columns))
 
         d2 = get_all_star_box_score(1980)
         df = d2['East']

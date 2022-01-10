@@ -26,7 +26,6 @@ class TestPlayers(unittest.TestCase):
 
     def test_get_player_headshot(self):
         expected_url = 'https://d2cwpp38twqe55.cloudfront.net/req/202006192/images/players/bryanko01.jpg'
-        
         url = get_player_headshot('Kobe Bryant')
         self.assertEqual(url, expected_url)
 
