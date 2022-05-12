@@ -17,14 +17,16 @@ def get_schedule(season, playoffs=False):
             table = soup.find('table', attrs={'id': 'schedule'})
             if table:
                 month_df = pd.read_html(str(table))[0]
-                df = df.append(month_df)
+                df = pd.concat([df, month_df])
+
     df = df.reset_index()
-    cols_to_remove = [i for i in df.columns if 'Unnamed' in i]
-    cols_to_remove += [i for i in df.columns if 'Notes' in i]
-    cols_to_remove += [i for i in df.columns if 'Start' in i]
-    cols_to_remove += [i for i in df.columns if 'Attend' in i]
-    cols_to_remove += ['index']
-    df = df.drop(cols_to_remove, axis=1)
+
+    del_cols_keywords = ['Unnamed', 'Notes', 'Start', 'Attend', 'index']
+    del_cols = []
+    for c in df.columns:
+        if any(word.lower() in c.lower() for word in del_cols_keywords):
+            del_cols.append(c)
+    df.drop(del_cols, axis=1, inplace=True)
     df.columns = ['DATE', 'VISITOR', 'VISITOR_PTS', 'HOME', 'HOME_PTS', 'ARENA']
     if season==2020:
         df = df[df['DATE']!='Playoffs']
