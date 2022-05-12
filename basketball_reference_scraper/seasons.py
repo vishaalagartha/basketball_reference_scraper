@@ -23,6 +23,7 @@ def get_schedule(season, playoffs=False):
     cols_to_remove += [i for i in df.columns if 'Notes' in i]
     cols_to_remove += [i for i in df.columns if 'Start' in i]
     cols_to_remove += [i for i in df.columns if 'Attend' in i]
+    cols_to_remove += [i for i in df.columns if 'Arena' in i]
     cols_to_remove += ['index']
     df = df.drop(cols_to_remove, axis=1)
     df.columns = ['DATE', 'VISITOR', 'VISITOR_PTS', 'HOME', 'HOME_PTS']
