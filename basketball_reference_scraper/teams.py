@@ -105,7 +105,7 @@ def get_team_misc(team, season_end_year):
         return pd.Series(index=list(s.columns), data=s.values.tolist()[0])
 
 
-def get_roster_stats(team, season_end_year, data_format='PER_GAME', playoffs=False):
+def get_roster_stats(team: list, season_end_year: int, data_format='PER_GAME', playoffs=False):
     if playoffs:
         period = 'playoffs'
     else:
@@ -134,3 +134,38 @@ def get_roster_stats(team, season_end_year, data_format='PER_GAME', playoffs=Fal
             lambda name: remove_accents(name, team, season_end_year))
         df = df.reset_index().drop(['Rk', 'index'], axis=1)
         return df
+
+def get_team_ratings(*, team=[], season_end_year: int):
+
+    r = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Fleagues%2FNBA_{season_end_year}_ratings.html&div=div_ratings')
+    if r.status_code == 200:
+        soup = BeautifulSoup(r.content, 'html.parser')
+        table = soup.find('table')
+        df = pd.read_html(str(table))[0]
+
+        # Clean columns and indexes
+        df = df.droplevel(level=0, axis=1)
+        
+        df.drop(columns=['Rk', 'Conf', 'Div', 'W', 'L', 'W/L%'], inplace=True)
+        upper_cols = list(pd.Series(df.columns).apply(lambda x: x.upper()))
+        df.columns = upper_cols
+
+        df['TEAM'] = df['TEAM'].apply(lambda x: x.upper())
+        df['TEAM'] = df['TEAM'].apply(lambda x: TEAM_TO_TEAM_ABBR[x])
+
+        # Add Season in and change order of columns
+        df['SEASON'] = f'{season_end_year-1}-{str(season_end_year)[2:]}'
+        cols = df.columns.tolist()
+        cols = cols[0:1] + cols[-1:] + cols[1:-1]
+        df = df[cols]
+
+        if len(team) > 0:
+            if isinstance(team, str):
+                list_team = []
+                list_team.append(team)
+                df = df[df['TEAM'].isin(list_team)]
+            else:
+                df = df[df['TEAM'].isin(team)]
+                    
+    return df
+    
