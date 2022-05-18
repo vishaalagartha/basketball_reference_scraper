@@ -112,7 +112,7 @@ def get_player_headshot(_name, ask_matches=True):
     url = 'https://d2cwpp38twqe55.cloudfront.net/req/202006192/images/players/'+jpg
     return url
 
-def get_player_splits(_name, season_end_year, type='PER_GAME', ask_matches=True):
+def get_player_splits(_name, season_end_year, stat_type='PER_GAME', ask_matches=True):
     name = lookup(_name, ask_matches)
     suffix = get_player_suffix(name)[:-5]
     r = get(f'https://www.basketball-reference.com/{suffix}/splits/{season_end_year}')
@@ -127,17 +127,43 @@ def get_player_splits(_name, season_end_year, type='PER_GAME', ask_matches=True)
             df = df[~df['Unnamed: 1_level_0','Value'].str.contains('Total|Value')]
             
             headers = df.iloc[:,:2]
-            
-        if type.lower() in ['per_game', 'shooting', 'advanced', 'totals']:
-            if type.lower() == 'per_game':
-                return df['Per Game']
-            elif type.lower() == 'shooting':
-                return df['Shooting']
-            elif type.lower() == 'advanced':
-                return df['Advanced']
-            elif type.lower() == 'totals':
-                return df['Totals']
-        else:
-            raise Exception('The type of data does not exist. The following options are: PER_GAME, SHOOTING, ADVANCED, TOTALS')
+            headers = headers.droplevel(0, axis=1)
+                
+            if stat_type.lower() in ['per_game', 'shooting', 'advanced', 'totals']:
+                if stat_type.lower() == 'per_game':
+                    df = df['Per Game']
+                    df['Split'] = headers['Split']
+                    df['Value'] = headers['Value']
+                    cols = df.columns.tolist()
+                    cols = cols[-2:] + cols[:-2]
+                    df = df[cols]
+                    return df
+                elif stat_type.lower() == 'shooting':
+                    df = df['Shooting']
+                    df['Split'] = headers['Split']
+                    df['Value'] = headers['Value']
+                    cols = df.columns.tolist()
+                    cols = cols[-2:] + cols[:-2]
+                    df = df[cols]
+                    return df
+                
+                elif stat_type.lower() == 'advanced':
+                    df =  df['Advanced']
+                    df['Split'] = headers['Split']
+                    df['Value'] = headers['Value']
+                    cols = df.columns.tolist()
+                    cols = cols[-2:] + cols[:-2]
+                    df = df[cols]
+                    return df
+                elif stat_type.lower() == 'totals':
+                    df = df['Totals']
+                    df['Split'] = headers['Split']
+                    df['Value'] = headers['Value']
+                    cols = df.columns.tolist()
+                    cols = cols[-2:] + cols[:-2]
+                    df = df[cols]
+                    return df
+            else:
+                raise Exception('The "stat_type" you entered does not exist. The following options are: PER_GAME, SHOOTING, ADVANCED, TOTALS')
             
         

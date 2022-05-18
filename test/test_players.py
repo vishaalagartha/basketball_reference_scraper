@@ -18,7 +18,7 @@ class TestPlayers(unittest.TestCase):
 
     def test_get_game_logs(self):
         expected_columns = ['DATE', 'AGE', 'TEAM', 'HOME/AWAY', 'OPPONENT', 'RESULT', 'GS', 'MP', 'FG', 'FGA', 'FG%', '3P', '3PA', '3P%', 'FT', 'FTA', 'FT%', 'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', 'GAME_SCORE', '+/-']
-        df = get_game_logs('Stephen Curry', '2015-10-11', '2016-10-11') 
+        df = get_game_logs('Stephen Curry', 2022) 
         self.assertCountEqual(list(df.columns), expected_columns)
 
         df = get_game_logs('Pau Gasol', '2010-01-12', '2010-01-20', playoffs=False)
