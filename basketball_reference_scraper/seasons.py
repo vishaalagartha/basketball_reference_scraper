@@ -21,13 +21,15 @@ def get_schedule(season, playoffs=False):
 
     df = df.reset_index()
 
-    del_cols_keywords = ['Unnamed', 'Notes', 'Start', 'Attend', 'index']
-    del_cols = []
-    for c in df.columns:
-        if any(word.lower() in c.lower() for word in del_cols_keywords):
-            del_cols.append(c)
-    df.drop(del_cols, axis=1, inplace=True)
-    df.columns = ['DATE', 'VISITOR', 'VISITOR_PTS', 'HOME', 'HOME_PTS', 'ARENA']
+    cols_to_remove = [i for i in df.columns if 'Unnamed' in i]
+    cols_to_remove += [i for i in df.columns if 'Notes' in i]
+    cols_to_remove += [i for i in df.columns if 'Start' in i]
+    cols_to_remove += [i for i in df.columns if 'Attend' in i]
+    cols_to_remove += [i for i in df.columns if 'Arena' in i]
+    cols_to_remove += ['index']
+    df = df.drop(cols_to_remove, axis=1)
+    df.columns = ['DATE', 'VISITOR', 'VISITOR_PTS', 'HOME', 'HOME_PTS']
+
     if season==2020:
         df = df[df['DATE']!='Playoffs']
         df['DATE'] = df['DATE'].apply(lambda x: pd.to_datetime(x))
