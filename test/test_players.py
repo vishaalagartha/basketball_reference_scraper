@@ -22,7 +22,7 @@ class TestPlayers(unittest.TestCase):
         self.assertCountEqual(list(df.columns), expected_columns)
 
         df = get_game_logs('Pau Gasol', 2010, playoffs=False)
-        self.assertEqual(len(df), 2)
+        self.assertEqual(len(df), 65)
 
     def test_get_player_headshot(self):
         expected_url = 'https://d2cwpp38twqe55.cloudfront.net/req/202006192/images/players/bryanko01.jpg'
