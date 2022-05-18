@@ -21,7 +21,7 @@ class TestPlayers(unittest.TestCase):
         df = get_game_logs('Stephen Curry', 2022) 
         self.assertCountEqual(list(df.columns), expected_columns)
 
-        df = get_game_logs('Pau Gasol', '2010-01-12', '2010-01-20', playoffs=False)
+        df = get_game_logs('Pau Gasol', 2010, playoffs=False)
         self.assertEqual(len(df), 2)
 
     def test_get_player_headshot(self):
