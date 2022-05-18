@@ -1,6 +1,7 @@
 import pandas as pd
 from requests import get
 from bs4 import BeautifulSoup
+import math
 
 try:
     from utils import get_player_suffix
@@ -110,3 +111,33 @@ def get_player_headshot(_name, ask_matches=True):
     jpg = suffix.split('/')[-1].replace('html', 'jpg')
     url = 'https://d2cwpp38twqe55.cloudfront.net/req/202006192/images/players/'+jpg
     return url
+
+def get_player_splits(_name, season_end_year, type='PER_GAME', ask_matches=True):
+    name = lookup(_name, ask_matches)
+    suffix = get_player_suffix(name)[:-5]
+    r = get(f'https://www.basketball-reference.com/{suffix}/splits/{season_end_year}')
+    if r.status_code==200:
+        soup = BeautifulSoup(r.content, 'html.parser')
+        table = soup.find('table')
+        if table:
+            df = pd.read_html(str(table))[0]
+            for i in range(1, len(df['Unnamed: 0_level_0','Split'])):
+                if isinstance(df['Unnamed: 0_level_0','Split'][i], float):
+                    df['Unnamed: 0_level_0','Split'][i] = df['Unnamed: 0_level_0','Split'][i-1]
+            df = df[~df['Unnamed: 1_level_0','Value'].str.contains('Total|Value')]
+            
+            headers = df.iloc[:,:2]
+            
+        if type.lower() in ['per_game', 'shooting', 'advanced', 'totals']:
+            if type.lower() == 'per_game':
+                return df['Per Game']
+            elif type.lower() == 'shooting':
+                return df['Shooting']
+            elif type.lower() == 'advanced':
+                return df['Advanced']
+            elif type.lower() == 'totals':
+                return df['Totals']
+        else:
+            raise Exception('The type of data does not exist. The following options are: PER_GAME, SHOOTING, ADVANCED, TOTALS')
+            
+        
