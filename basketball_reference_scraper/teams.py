@@ -170,5 +170,3 @@ def get_team_ratings(*, team=[], season_end_year: int):
                 df = df[df['TEAM'].isin(team)]
                     
     return df
-
-
