@@ -65,7 +65,7 @@ def get_game_logs(_name, year, playoffs=False, ask_matches=True):
             df = df[df['Rk']!='Rk']
             df = df.drop(['Rk', 'G'], axis=1)
             df['DATE'] = pd.to_datetime(df['DATE'])
-            df = df[df['GS'] == '1'].reset_index(drop=True)          
+            df = df[df['GS'].isin(['0','1'])].reset_index(drop=True)
     return df
 
 # def get_game_logs(_name, start_date, end_date, playoffs=False, ask_matches=True):
