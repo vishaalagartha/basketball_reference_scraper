@@ -20,7 +20,7 @@ from basketball_reference_scraper.players import get_stats, get_game_logs
 s = get_stats('Stephen Curry', stat_type='PER_GAME', playoffs=False, career=False)
 print(s)
 
-df = get_game_logs('LeBron James', '2010-01-19', '2014-01-20', playoffs=False)
+df = get_game_logs('LeBron James', 2010, playoffs=False)
 print(df)
 
 from basketball_reference_scraper.seasons import get_schedule, get_standings
@@ -53,7 +53,7 @@ print(s)
 
 from basketball_reference_scraper.players import get_game_logs, get_player_headshot
 
-df = get_game_logs('Pau Gasol', '2010-01-12', '2010-01-20', playoffs=False)
+df = get_game_logs('Pau Gasol', 2010, playoffs=False)
 print(df)
 
 url = get_player_headshot('Kobe Bryant')
