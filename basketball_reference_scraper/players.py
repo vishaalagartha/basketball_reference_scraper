@@ -65,7 +65,7 @@ def get_game_logs(_name, year, playoffs=False, ask_matches=True):
             df = df.drop(['Rk', 'G'], axis=1)
             df['DATE'] = pd.to_datetime(df['DATE'])
             df = df[df['GS'] == '1'].reset_index(drop=True)          
-    return df
+            return df
 
 def get_player_headshot(_name, ask_matches=True):
     name = lookup(_name, ask_matches)
