@@ -137,6 +137,7 @@ def get_roster_stats(team: list, season_end_year: int, data_format='PER_GAME', p
 
 def get_team_ratings(*, team=[], season_end_year: int):
 
+    # Scrape data from URL
     r = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Fleagues%2FNBA_{season_end_year}_ratings.html&div=div_ratings')
     if r.status_code == 200:
         soup = BeautifulSoup(r.content, 'html.parser')
@@ -153,12 +154,13 @@ def get_team_ratings(*, team=[], season_end_year: int):
         df['TEAM'] = df['TEAM'].apply(lambda x: x.upper())
         df['TEAM'] = df['TEAM'].apply(lambda x: TEAM_TO_TEAM_ABBR[x])
 
-        # Add Season in and change order of columns
+        # Add 'Season' column in and change order of columns
         df['SEASON'] = f'{season_end_year-1}-{str(season_end_year)[2:]}'
         cols = df.columns.tolist()
         cols = cols[0:1] + cols[-1:] + cols[1:-1]
         df = df[cols]
 
+        # Add the ability to either pass no teams (empty list), one team (str), or multiple teams (list)
         if len(team) > 0:
             if isinstance(team, str):
                 list_team = []
@@ -168,4 +170,3 @@ def get_team_ratings(*, team=[], season_end_year: int):
                 df = df[df['TEAM'].isin(team)]
                     
     return df
-    
