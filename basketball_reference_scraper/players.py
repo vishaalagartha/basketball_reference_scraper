@@ -75,3 +75,57 @@ def get_player_headshot(_name, ask_matches=True):
     jpg = suffix.split('/')[-1].replace('html', 'jpg')
     url = 'https://d2cwpp38twqe55.cloudfront.net/req/202006192/images/players/'+jpg
     return url
+
+def get_player_splits(_name, season_end_year, stat_type='PER_GAME', ask_matches=True):
+    name = lookup(_name, ask_matches)
+    suffix = get_player_suffix(name)[:-5]
+    r = get(f'https://www.basketball-reference.com/{suffix}/splits/{season_end_year}')
+    if r.status_code==200:
+        soup = BeautifulSoup(r.content, 'html.parser')
+        table = soup.find('table')
+        if table:
+            df = pd.read_html(str(table))[0]
+            for i in range(1, len(df['Unnamed: 0_level_0','Split'])):
+                if isinstance(df['Unnamed: 0_level_0','Split'][i], float):
+                    df['Unnamed: 0_level_0','Split'][i] = df['Unnamed: 0_level_0','Split'][i-1]
+            df = df[~df['Unnamed: 1_level_0','Value'].str.contains('Total|Value')]
+            
+            headers = df.iloc[:,:2]
+            headers = headers.droplevel(0, axis=1)
+                
+            if stat_type.lower() in ['per_game', 'shooting', 'advanced', 'totals']:
+                if stat_type.lower() == 'per_game':
+                    df = df['Per Game']
+                    df['Split'] = headers['Split']
+                    df['Value'] = headers['Value']
+                    cols = df.columns.tolist()
+                    cols = cols[-2:] + cols[:-2]
+                    df = df[cols]
+                    return df
+                elif stat_type.lower() == 'shooting':
+                    df = df['Shooting']
+                    df['Split'] = headers['Split']
+                    df['Value'] = headers['Value']
+                    cols = df.columns.tolist()
+                    cols = cols[-2:] + cols[:-2]
+                    df = df[cols]
+                    return df
+                
+                elif stat_type.lower() == 'advanced':
+                    df =  df['Advanced']
+                    df['Split'] = headers['Split']
+                    df['Value'] = headers['Value']
+                    cols = df.columns.tolist()
+                    cols = cols[-2:] + cols[:-2]
+                    df = df[cols]
+                    return df
+                elif stat_type.lower() == 'totals':
+                    df = df['Totals']
+                    df['Split'] = headers['Split']
+                    df['Value'] = headers['Value']
+                    cols = df.columns.tolist()
+                    cols = cols[-2:] + cols[:-2]
+                    df = df[cols]
+                    return df
+            else:
+                raise Exception('The "stat_type" you entered does not exist. The following options are: PER_GAME, SHOOTING, ADVANCED, TOTALS')
