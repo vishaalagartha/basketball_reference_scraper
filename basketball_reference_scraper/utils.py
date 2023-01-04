@@ -3,9 +3,13 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import unicodedata, unidecode
 
+try:
+    from request_utils import get_wrapper
+except:
+    from basketball_reference_scraper.request_utils import get_wrapper
 
 def get_game_suffix(date, team1, team2):
-    r = get(f'https://www.basketball-reference.com/boxscores/index.fcgi?year={date.year}&month={date.month}&day={date.day}')
+    r = get_wrapper(f'https://www.basketball-reference.com/boxscores/index.fcgi?year={date.year}&month={date.month}&day={date.day}')
     suffix = None
     if r.status_code==200:
         soup = BeautifulSoup(r.content, 'html.parser')
@@ -60,13 +64,13 @@ def get_player_suffix(name):
         other_names_search = other_names
         last_name_part = create_last_name_part_of_suffix(other_names)
         suffix = '/players/'+initial+'/'+last_name_part+first_name_part+'01.html'
-    player_r = get(f'https://www.basketball-reference.com{suffix}')
+    player_r = get_wrapper(f'https://www.basketball-reference.com{suffix}')
     while player_r.status_code == 404:
         other_names_search.pop(0)
         last_name_part = create_last_name_part_of_suffix(other_names_search)
         initial = last_name_part[0].lower()
         suffix = '/players/'+initial+'/'+last_name_part+first_name_part+'01.html'
-        player_r = get(f'https://www.basketball-reference.com{suffix}')
+        player_r = get_wrapper(f'https://www.basketball-reference.com{suffix}')
     while player_r.status_code==200:
         player_soup = BeautifulSoup(player_r.content, 'html.parser')
         h1 = player_soup.find('h1')
@@ -98,7 +102,7 @@ def get_player_suffix(name):
                     initial = last_name_part[0].lower()
                     suffix = '/players/'+initial+'/'+last_name_part+first_name_part+'01.html'
 
-                player_r = get(f'https://www.basketball-reference.com{suffix}')
+                player_r = get_wrapper(f'https://www.basketball-reference.com{suffix}')
 
     return None
 
@@ -107,7 +111,7 @@ def remove_accents(name, team, season_end_year):
     alphabet = set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXZY ')
     if len(set(name).difference(alphabet))==0:
         return name
-    r = get(f'https://www.basketball-reference.com/teams/{team}/{season_end_year}.html')
+    r = get_wrapper(f'https://www.basketball-reference.com/teams/{team}/{season_end_year}.html')
     team_df = None
     best_match = name
     if r.status_code==200:

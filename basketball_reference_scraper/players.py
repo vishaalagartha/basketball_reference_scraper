@@ -5,8 +5,10 @@ from bs4 import BeautifulSoup
 try:
     from utils import get_player_suffix
     from lookup import lookup
+    from request_utils import get_wrapper
 except:
     from basketball_reference_scraper.utils import get_player_suffix
+    from basketball_reference_scraper.request_utils import get_wrapper
     from basketball_reference_scraper.lookup import lookup
 
 def get_stats(_name, stat_type='PER_GAME', playoffs=False, career=False, ask_matches = True):
@@ -19,7 +21,7 @@ def get_stats(_name, stat_type='PER_GAME', playoffs=False, career=False, ask_mat
     selector = stat_type.lower()
     if playoffs:
         selector = 'playoffs_'+selector
-    r = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url={suffix}&div=div_{selector}')
+    r = get_wrapper(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url={suffix}&div=div_{selector}')
     if r.status_code==200:
         soup = BeautifulSoup(r.content, 'html.parser')
         table = soup.find('table')
@@ -52,7 +54,7 @@ def get_game_logs(_name, year, playoffs=False, ask_matches=True):
         selector = 'div_pgl_basic_playoffs'
     else:
         selector = 'div_pgl_basic'
-    r = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url={suffix}%2Fgamelog%2F{year}%2F&div={selector}')
+    r = get_wrapper(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url={suffix}%2Fgamelog%2F{year}%2F&div={selector}')
     if r.status_code==200:
         soup = BeautifulSoup(r.content, 'html.parser')
         table = soup.find('table')

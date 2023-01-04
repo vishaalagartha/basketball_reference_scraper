@@ -4,11 +4,13 @@ from bs4 import BeautifulSoup
 
 try:
     from constants import TEAM_TO_TEAM_ABBR
+    from request_utils import get_wrapper
 except:
     from basketball_reference_scraper.constants import TEAM_TO_TEAM_ABBR
+    from basketball_reference_scraper.request_utils import get_wrapper
 
 def get_injury_report():
-    r = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Ffriv%2Finjuries.fcgi&div=div_injuries')
+    r = get_wrapper(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Ffriv%2Finjuries.fcgi&div=div_injuries')
     if r.status_code==200:
         soup = BeautifulSoup(r.content, 'html.parser')
         table = soup.find('table')

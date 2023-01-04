@@ -5,12 +5,14 @@ from datetime import datetime
 
 try:
     from utils import get_game_suffix
+    from request_utils import get_wrapper
 except:
     from basketball_reference_scraper.utils import get_game_suffix
+    from basketball_reference_scraper.request_utils import get_wrapper
 
 def get_pbp_helper(suffix):
     selector = f'#pbp'
-    r = get(f'https://www.basketball-reference.com/boxscores/pbp{suffix}')
+    r = get_wrapper(f'https://www.basketball-reference.com/boxscores/pbp{suffix}')
     if r.status_code==200:
         soup = BeautifulSoup(r.content, 'html.parser')
         table = soup.find('table', attrs={'id': 'pbp'})

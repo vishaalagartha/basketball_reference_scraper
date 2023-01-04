@@ -8,15 +8,17 @@ import re
 try:
     from utils import get_game_suffix, remove_accents
     from players import get_stats 
+    from request_utils import get_wrapper
 except:
     from basketball_reference_scraper.utils import get_game_suffix, remove_accents
     from basketball_reference_scraper.players import get_stats
+    from basketball_reference_scraper.request_utils import get_wrapper
 
 def get_box_scores(date, team1, team2, period='GAME', stat_type='BASIC'):
     date = pd.to_datetime(date)
     suffix = get_game_suffix(date, team1, team2).replace('/', '%2F')
-    r1 = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url={suffix}&div=div_box-{team1}-{period.lower()}-{stat_type.lower()}')
-    r2 = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url={suffix}&div=div_box-{team2}-{period.lower()}-{stat_type.lower()}')
+    r1 = get_wrapper(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url={suffix}&div=div_box-{team1}-{period.lower()}-{stat_type.lower()}')
+    r2 = get_wrapper(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url={suffix}&div=div_box-{team2}-{period.lower()}-{stat_type.lower()}')
     dfs = []
     if r1.status_code==200 and r2.status_code==200:
         for rq in (r1, r2):
@@ -64,7 +66,7 @@ def get_all_star_box_score(year: int):
     """
     if year >= datetime.now().year or year < 1951:
         raise ValueError('Please enter a valid year')
-    r = get(f'https://www.basketball-reference.com/allstar/NBA_{year}.html')
+    r = get_wrapper(f'https://www.basketball-reference.com/allstar/NBA_{year}.html')
     if r.status_code == 200:
         dfs = []
         soup = BeautifulSoup(r.content, 'html.parser')

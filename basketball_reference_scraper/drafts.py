@@ -1,9 +1,9 @@
 import pandas as pd
-from requests import get
+
 from bs4 import BeautifulSoup
 
 def get_draft_class(year):
-      r = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Fdraft%2FNBA_{year}.html&div=div_stats')
+      r = get_wrapper(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Fdraft%2FNBA_{year}.html&div=div_stats')
       df = None
 
       if r.status_code==200:
