@@ -1,16 +1,15 @@
 import pandas as pd
-from requests import get
 from bs4 import BeautifulSoup
 from datetime import datetime
 
 try:
-    from utils import get_game_suffix
+    from utils import get_game_suffix, RetriableRequest
 except:
-    from basketball_reference_scraper.utils import get_game_suffix
+    from basketball_reference_scraper.utils import get_game_suffix, RetriableRequest
 
 def get_pbp_helper(suffix):
     selector = f'#pbp'
-    r = get(f'https://www.basketball-reference.com/boxscores/pbp{suffix}')
+    r = RetriableRequest.get(f'https://www.basketball-reference.com/boxscores/pbp{suffix}')
     if r.status_code==200:
         soup = BeautifulSoup(r.content, 'html.parser')
         table = soup.find('table', attrs={'id': 'pbp'})

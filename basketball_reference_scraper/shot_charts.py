@@ -1,13 +1,12 @@
 import pandas as pd
-from requests import get
 from bs4 import BeautifulSoup
 from datetime import datetime
 import re
 
 try:
-    from utils import get_game_suffix
+    from utils import get_game_suffix, RetriableRequest
 except:
-    from basketball_reference_scraper.utils import get_game_suffix
+    from basketball_reference_scraper.utils import get_game_suffix, RetriableRequest
 
 def get_location(s):
     l = s.split(';')
@@ -34,7 +33,7 @@ def get_description(s):
 def get_shot_chart(date, team1, team2):
     date = pd.to_datetime(date)
     suffix = get_game_suffix(date, team1, team2).replace('/boxscores', '')
-    r = get(f'https://www.basketball-reference.com/boxscores/shot-chart{suffix}')
+    r = RetriableRequest.get(f'https://www.basketball-reference.com/boxscores/shot-chart{suffix}')
     if r.status_code==200:
         soup = BeautifulSoup(r.content, 'html.parser')
         shot_chart1_div = soup.find('div', attrs={'id': f'shots-{team1}'})

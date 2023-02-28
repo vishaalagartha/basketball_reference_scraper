@@ -1,11 +1,12 @@
 import pandas as pd
-from requests import get
 from bs4 import BeautifulSoup
 
 try:
     from constants import TEAM_TO_TEAM_ABBR
+    from utils import RetriableRequest
 except:
     from basketball_reference_scraper.constants import TEAM_TO_TEAM_ABBR
+    from basketball_reference_scraper.utils import RetriableRequest
 
 def get_injury_report():
     r = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Ffriv%2Finjuries.fcgi&div=div_injuries')
