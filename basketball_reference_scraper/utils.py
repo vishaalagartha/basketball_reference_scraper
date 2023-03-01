@@ -1,11 +1,33 @@
-from requests import get
+from requests import Session as HttpSession
+from requests.adapters import HTTPAdapter, Retry
 from bs4 import BeautifulSoup
 import pandas as pd
 import unicodedata, unidecode
+from sys import stderr
 
+
+class RetriableRequest:
+    __session = None
+
+    @staticmethod
+    def __init__session__():
+        if RetriableRequest.__session is not None:
+            return
+        stderr.write("Initializing HTTPS Session\n")
+        RetriableRequest.__session = HttpSession()
+        retries = Retry(total=30,
+                        backoff_factor=1,
+                        status_forcelist=[429],
+                        allowed_methods=False)
+        RetriableRequest.__session.mount("https://", HTTPAdapter(max_retries=retries))
+
+    @staticmethod
+    def get(url):
+        RetriableRequest.__init__session__()
+        return RetriableRequest.__session.get(url)
 
 def get_game_suffix(date, team1, team2):
-    r = get(f'https://www.basketball-reference.com/boxscores/index.fcgi?year={date.year}&month={date.month}&day={date.day}')
+    r = RetriableRequest.get(f'https://www.basketball-reference.com/boxscores/index.fcgi?year={date.year}&month={date.month}&day={date.day}')
     suffix = None
     if r.status_code==200:
         soup = BeautifulSoup(r.content, 'html.parser')
@@ -60,20 +82,20 @@ def get_player_suffix(name):
         other_names_search = other_names
         last_name_part = create_last_name_part_of_suffix(other_names)
         suffix = '/players/'+initial+'/'+last_name_part+first_name_part+'01.html'
-    player_r = get(f'https://www.basketball-reference.com{suffix}')
+    player_r = RetriableRequest.get(f'https://www.basketball-reference.com{suffix}')
     while player_r.status_code == 404:
         other_names_search.pop(0)
         last_name_part = create_last_name_part_of_suffix(other_names_search)
         initial = last_name_part[0].lower()
         suffix = '/players/'+initial+'/'+last_name_part+first_name_part+'01.html'
-        player_r = get(f'https://www.basketball-reference.com{suffix}')
+        player_r = RetriableRequest.get(f'https://www.basketball-reference.com{suffix}')
     while player_r.status_code==200:
         player_soup = BeautifulSoup(player_r.content, 'html.parser')
         h1 = player_soup.find('h1')
         if h1:
             page_name = h1.find('span').text
             """
-                Test if the URL we constructed matches the 
+                Test if the URL we constructed matches the
                 name of the player on that page; if it does,
                 return suffix, if not add 1 to the numbering
                 and recheck.
@@ -98,7 +120,10 @@ def get_player_suffix(name):
                     initial = last_name_part[0].lower()
                     suffix = '/players/'+initial+'/'+last_name_part+first_name_part+'01.html'
 
-                player_r = get(f'https://www.basketball-reference.com{suffix}')
+                player_r = RetriableRequest.get(f'https://www.basketball-reference.com{suffix}')
+    if player_r.status_code != 200:
+        print(player_r.status_code)
+        print(player_r.content)
 
     return None
 
@@ -107,7 +132,7 @@ def remove_accents(name, team, season_end_year):
     alphabet = set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXZY ')
     if len(set(name).difference(alphabet))==0:
         return name
-    r = get(f'https://www.basketball-reference.com/teams/{team}/{season_end_year}.html')
+    r = RetriableRequest.get(f'https://www.basketball-reference.com/teams/{team}/{season_end_year}.html')
     team_df = None
     best_match = name
     if r.status_code==200:

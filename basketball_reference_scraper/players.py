@@ -1,12 +1,11 @@
 import pandas as pd
-from requests import get
 from bs4 import BeautifulSoup
 
 try:
-    from utils import get_player_suffix
+    from utils import get_player_suffix, RetriableRequest
     from lookup import lookup
 except:
-    from basketball_reference_scraper.utils import get_player_suffix
+    from basketball_reference_scraper.utils import get_player_suffix, RetriableRequest
     from basketball_reference_scraper.lookup import lookup
 
 def get_stats(_name, stat_type='PER_GAME', playoffs=False, career=False, ask_matches = True):
@@ -19,7 +18,7 @@ def get_stats(_name, stat_type='PER_GAME', playoffs=False, career=False, ask_mat
     selector = stat_type.lower()
     if playoffs:
         selector = 'playoffs_'+selector
-    r = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url={suffix}&div=div_{selector}')
+    r = RetriableRequest.get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url={suffix}&div=div_{selector}')
     if r.status_code==200:
         soup = BeautifulSoup(r.content, 'html.parser')
         table = soup.find('table')
@@ -43,19 +42,22 @@ def get_stats(_name, stat_type='PER_GAME', playoffs=False, career=False, ask_mat
 
         df = df.reset_index().drop('index', axis=1)
         return df
+    else:
+        print(r.status_code)
+        print(r.content)
 
 
 def get_game_logs(_name, year, playoffs=False, ask_matches=True):
     name = lookup(_name, ask_matches)
-    suffix = get_player_suffix(name).replace('/', '%2F').replace('.html', '')
+    suffix = get_player_suffix(name)[:-5]
     if playoffs:
-        selector = 'div_pgl_basic_playoffs'
+        selector = 'pgl_basic_playoffs'
     else:
-        selector = 'div_pgl_basic'
-    r = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url={suffix}%2Fgamelog%2F{year}%2F&div={selector}')
+        selector = 'pgl_basic'
+    r = RetriableRequest.get(f'https://www.basketball-reference.com/{suffix}/gamelog/{year}')
     if r.status_code==200:
         soup = BeautifulSoup(r.content, 'html.parser')
-        table = soup.find('table')
+        table = soup.find('table', attrs={'id': selector})
         if table:
             df = pd.read_html(str(table))[0]
             df.rename(columns = {'Date': 'DATE', 'Age': 'AGE', 'Tm': 'TEAM', 'Unnamed: 5': 'HOME/AWAY', 'Opp': 'OPPONENT',
@@ -64,7 +66,7 @@ def get_game_logs(_name, year, playoffs=False, ask_matches=True):
             df = df[df['Rk']!='Rk']
             df = df.drop(['Rk', 'G'], axis=1)
             df['DATE'] = pd.to_datetime(df['DATE'])
-            df = df[df['GS'] == '1'].reset_index(drop=True)          
+            df = df[df['GS'] == '1'].reset_index(drop=True)
             return df
 
 def get_player_headshot(_name, ask_matches=True):
@@ -77,7 +79,7 @@ def get_player_headshot(_name, ask_matches=True):
 def get_player_splits(_name, season_end_year, stat_type='PER_GAME', ask_matches=True):
     name = lookup(_name, ask_matches)
     suffix = get_player_suffix(name)[:-5]
-    r = get(f'https://www.basketball-reference.com/{suffix}/splits/{season_end_year}')
+    r = RetriableRequest.get(f'https://www.basketball-reference.com/{suffix}/splits/{season_end_year}')
     if r.status_code==200:
         soup = BeautifulSoup(r.content, 'html.parser')
         table = soup.find('table')
@@ -87,10 +89,10 @@ def get_player_splits(_name, season_end_year, stat_type='PER_GAME', ask_matches=
                 if isinstance(df['Unnamed: 0_level_0','Split'][i], float):
                     df['Unnamed: 0_level_0','Split'][i] = df['Unnamed: 0_level_0','Split'][i-1]
             df = df[~df['Unnamed: 1_level_0','Value'].str.contains('Total|Value')]
-            
+
             headers = df.iloc[:,:2]
             headers = headers.droplevel(0, axis=1)
-                
+
             if stat_type.lower() in ['per_game', 'shooting', 'advanced', 'totals']:
                 if stat_type.lower() == 'per_game':
                     df = df['Per Game']
@@ -108,7 +110,7 @@ def get_player_splits(_name, season_end_year, stat_type='PER_GAME', ask_matches=
                     cols = cols[-2:] + cols[:-2]
                     df = df[cols]
                     return df
-                
+
                 elif stat_type.lower() == 'advanced':
                     df =  df['Advanced']
                     df['Split'] = headers['Split']
