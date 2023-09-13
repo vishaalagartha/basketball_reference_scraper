@@ -1,6 +1,6 @@
 import pandas as pd
 from requests import get
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Comment
 
 try:
     from constants import TEAM_TO_TEAM_ABBR, TEAM_SETS
@@ -84,25 +84,25 @@ def get_opp_stats(team, season_end_year, data_format='PER_GAME'):
 
 
 def get_team_misc(team, season_end_year):
-    r = get(
-        f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Fleagues%2FNBA_{season_end_year}.html&div=div_advanced-team')
+    r = get(f'https://www.basketball-reference.com/teams/{team}/{season_end_year}.html')
     df = None
     if r.status_code == 200:
         soup = BeautifulSoup(r.content, 'html.parser')
-        table = soup.find('table')
-        df = pd.read_html(str(table))[0]
-        df.columns = list(map(lambda x: x[1], list(df.columns)))
-        league_avg_index = df[df['Team'] == 'League Average'].index[0]
-        df = df[:league_avg_index]
-        df['Team'] = df['Team'].apply(lambda x: x.replace('*', '').upper())
-        df['TEAM'] = df['Team'].apply(lambda x: TEAM_TO_TEAM_ABBR[x])
-        df = df.drop(['Rk', 'Team'], axis=1)
-        df.rename(columns={'Age': 'AGE', 'Pace': 'PACE', 'Arena': 'ARENA',
-                  'Attend.': 'ATTENDANCE', 'Attend./G': 'ATTENDANCE/G'}, inplace=True)
+        comments = soup.find_all(string=lambda text: isinstance(text, Comment))
+        tables = []
+        for each in comments:
+            if 'table' in str(each):
+                try:
+                    tables.append(pd.read_html(each, attrs = {'id': 'team_misc'}, header=1)[0])
+                except:
+                    continue
+        df = pd.DataFrame(tables[0])
+        df.columns = df.columns.str.replace(r'\.1','',regex=True)
         df.loc[:, 'SEASON'] = f'{season_end_year-1}-{str(season_end_year)[2:]}'
-        s = df[df['TEAM'] == team]
-        s = s.loc[:, ~s.columns.str.contains('^Unnamed')]
-        return pd.Series(index=list(s.columns), data=s.values.tolist()[0])
+        df['TEAM'] = team
+        df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+        
+        return pd.Series(index=list(df.columns), data=df.values.tolist()[0])
 
 
 def get_roster_stats(team: list, season_end_year: int, data_format='PER_GAME', playoffs=False):
