@@ -20,16 +20,18 @@ Returns:
     'NATIONALITY', 'EXPERIENCE', 'COLLEGE']
   ```
 
-### `get_team_stats(team, season_end_year, data_format='PER_GAME')`
+### `get_team_stats(team, season_end_year, data_format='TOTALS')`
 
 Parameters:
   - `team` - NBA team abbreviation (e.g. `'GSW'`, `'SAS'`)
   - `season_end_year` - Desired end year (e.g. `1988`, `2011`)
-  - `data_format` - One of `'TOTAL'|'PER_GAME'|'PER_POSS'`. Default value is `'PER_GAME'`
+  - `data_format` - One of `'TOTALS'|'PER_GAME'|'PER_MINUTE'|'RANK'|'YEAR/YEAR'`. Default value is `'TOTALS'`
 
 Returns:
 
   A Pandas Series containing the following indices:
+
+  **Note**: Ranks are per game (except for MP, which are total) and sorted descending (except for TOV and PF); opponents ranked are flipped; year/year calculations are also per game
 
   ```
   ['G', 'MP', 'FG', 'FGA', 'FG%', '3P', '3PA', '3P%', '2P', '2PA', '2P%', 'FT', 'FTA', 'FT%', 'ORB', 
@@ -37,20 +39,38 @@ Returns:
   ```
 
 
-### `get_opp_stats(team, season_end_year, data_format='PER_GAME')`
+### `get_opp_stats(team, season_end_year, data_format)`
 
 Parameters:
   - `team` - NBA team abbreviation (e.g. `'GSW'`, `'SAS'`)
   - `season_end_year` - Desired end year (e.g. `1988`, `2011`)
-  - `data_format` - One of `'TOTAL'|'PER_GAME'|'PER_POSS'`. Default value is `'PER_GAME'`
+  - `data_format` - One of `'TOTALS'|'PER_GAME'|'PER_MINUTE'|'RANK'|'YEAR/YEAR'`. Default value is `'TOTALS'`
 
 Returns:
 
   A Pandas Series containing the following indices:
 
+  **Note**: Ranks are per game (except for MP, which are total) and sorted descending (except for TOV and PF); opponents ranked are flipped; year/year calculations are also per game
+
   ```
   ['OPP_G', 'OPP_MP', 'OPP_FG', 'OPP_FGA', 'OPP_FG%', 'OPP_3P', 'OPP_3PA', 'OPP_3P%', 'OPP_2P', 'OPP_2PA', 'OPP_2P%', 'OPP_FT', 'OPP_FTA', 'OPP_FT%', 
   'OPP_ORB', 'OPP_DRB', 'OPP_TRB', 'OPP_AST', 'OPP_STL', 'OPP_BLK', 'OPP_TOV', 'OPP_PF', 'OPP_PTS']
+  ```
+
+### `get_team_misc(team, season, data_format)`
+
+Parameters:
+  - `team` - NBA team abbreviation (e.g. `'GSW'`, `'SAS'`)
+  - `season_end_year` - Desired end year (e.g. `1988`, `2011`)
+  - `data_format` - One of `'TOTALS'|'RANK'`. Default value is `'TOTALS'`
+
+Returns:
+
+  A Pandas Series containing the following columns:
+
+  ```
+  ['W', 'L', 'PW', 'PL', 'MOV', 'SOS', 'SRS', 'ORtg', 'DRtg', 'Pace', 'FTr', '3PAr', 'eFG%', 'TOV%', 'ORB%', 
+  'FT/FGA', 'eFG%', 'TOV%', 'DRB%', 'FT/FGA', 'Arena', 'Attendance']
   ```
 
 ### `get_roster_stats(team, season, data_format='PER_GAME', playoffs=False)`
@@ -69,19 +89,19 @@ Returns:
   ['PLAYER', 'POS', 'AGE', 'TEAM', 'G', 'GS', 'MP', 'FG', 'FGA', 'FG%', '3P', '3PA', '3P%', '2P', '2PA', '2P%', 'eFG%', 'FT', 'FTA', 'FT%', 'ORB', 'DRB', 'TRB', 'AST', 'STL', 'BLK', 'TOV', 'PF', 'PTS', 'SEASON']
   ```
 
-### `get_team_misc(team, season)`
+### `get_team_ratings(season, team=[])`
 
 Parameters:
-  - `team` - NBA team abbreviation (e.g. `'GSW'`, `'SAS'`)
-  - `season_end_year` - Desired end year (e.g. `1988`, `2011`)
+  - `season` - Desired end year (e.g. `1988`, `2011`)
+  - `team` - NBA team abbreviation (e.g. `'GSW'`, `'SAS'`), list of abbreviations (e.g. `['GSW'`, `'SAS']`), or empty list (indicating all team ratings). Default value is `[]`.
 
 Returns:
 
-  A Pandas Series containing the following columns:
+  A Pandas Dataframe containing the following columns:
 
   ```
-  ['W', 'L', 'PW', 'PL', 'MOV', 'SOS', 'SRS', 'ORtg', 'DRtg', 'Pace', 'FTr', '3PAr', 'eFG%', 'TOV%', 'ORB%', 
-  'FT/FGA', 'eFG%', 'TOV%', 'DRB%', 'FT/FGA', 'Arena', 'Attendance']
+  ['RK', 'TEAM', 'CONF', 'DIV', 'W', 'L', 'W/L%', 'MOV', 'ORTG', 'DRTG',
+        'NRTG', 'MOV/A', 'ORTG/A', 'DRTG/A', 'NRTG/A']
   ```
 
 ## Players
