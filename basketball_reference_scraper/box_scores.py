@@ -16,22 +16,30 @@ except:
 
 def get_box_scores(date, team1, team2, period='GAME', stat_type='BASIC'):
     date = pd.to_datetime(date)
-    suffix = get_game_suffix(date, team1, team2).replace('/', '%2F')
-    r1 = get_wrapper(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url={suffix}&div=div_box-{team1}-{period.lower()}-{stat_type.lower()}')
-    r2 = get_wrapper(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url={suffix}&div=div_box-{team2}-{period.lower()}-{stat_type.lower()}')
-    dfs = []
-    if r1.status_code==200 and r2.status_code==200:
-        for rq in (r1, r2):
-            soup = BeautifulSoup(rq.content, 'html.parser')
-            table = soup.find('table')
+    suffix = get_game_suffix(date, team1, team2)
+    r = get_wrapper(f'https://www.basketball-reference.com/{suffix}')
+    if r.status_code == 200:
+        dfs = []
+        if period == 'GAME':
+            if stat_type == 'ADVANCED':
+                selectors = [f'box-{team1}-game-advanced', f'box-{team2}-game-advanced']
+            else:
+                selectors = [f'box-{team1}-game-basic', f'box-{team2}-game-basic']
+        else:
+            selectors = [f'box-{team1}-{period.lower()}-basic', f'box-{period.lower()}-game-basic']
+        soup = BeautifulSoup(r.content, 'html.parser')
+        for selector in selectors:
+            table = soup.find('table', { 'id': selector })
             raw_df = pd.read_html(str(table))[0]
             df = _process_box(raw_df)
-            if rq == r1:
+            if team1 in selector:
                 df['PLAYER'] = df['PLAYER'].apply(lambda name: remove_accents(name, team1, date.year))
-            if rq == r2:
+            if team2 in selector:
                  df['PLAYER'] = df['PLAYER'].apply(lambda name: remove_accents(name, team2, date.year))
             dfs.append(df)
         return {team1: dfs[0], team2: dfs[1]}
+    else:
+        raise ConnectionError('Request to basketball reference failed')
 
 def _process_box(df):
     """ Perform basic processing on a box score - common to both methods
@@ -49,6 +57,7 @@ def _process_box(df):
     reserve_index = df[df['PLAYER']=='Reserves'].index[0]
     df = df.drop(reserve_index).reset_index().drop('index', axis=1) 
     return df
+    
 
 
 def get_all_star_box_score(year: int):
@@ -98,4 +107,3 @@ def get_all_star_box_score(year: int):
         return res 
     else:
         raise ConnectionError('Request to basketball reference failed')
-

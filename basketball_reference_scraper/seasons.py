@@ -1,6 +1,5 @@
 import pandas as pd
 from datetime import datetime
-from requests import get
 from bs4 import BeautifulSoup
 
 try:
@@ -86,4 +85,6 @@ def get_standings(date=None):
             w_df.rename(columns={'Western Conference': 'TEAM'}, inplace=True)
         d['EASTERN_CONF'] = e_df
         d['WESTERN_CONF'] = w_df
-    return d
+        return d
+    else:
+        raise ConnectionError('Request to basketball reference failed')

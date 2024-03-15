@@ -17,6 +17,8 @@ def get_pbp_helper(suffix):
         soup = BeautifulSoup(r.content, 'html.parser')
         table = soup.find('table', attrs={'id': 'pbp'})
         return pd.read_html(str(table))[0]
+    else:
+        raise ConnectionError('Request to basketball reference failed')
 
 def format_df(df1):
     df1.columns = list(map(lambda x: x[1], list(df1.columns)))

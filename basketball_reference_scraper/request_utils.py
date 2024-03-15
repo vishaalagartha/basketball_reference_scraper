@@ -9,8 +9,14 @@ from selenium.webdriver.common.by import By
 options = Options()
 options.add_argument('--headless=new')
 driver = webdriver.Chrome(options=options)
+last_request = time()
 
-def get_selenium_wrapper(url, xpath, clickable_xpath=None):
+def get_selenium_wrapper(url, xpath):
+    global last_request
+    # Verify last request was 3 seconds ago
+    if 0 < time() - last_request < 3:
+        sleep(3)
+    last_request = time()
     try:
         driver.get(url)
         element = driver.find_element(By.XPATH, xpath)
@@ -20,6 +26,11 @@ def get_selenium_wrapper(url, xpath, clickable_xpath=None):
         return None
 
 def get_wrapper(url):
+    global last_request
+    # Verify last request was 3 seconds ago
+    if 0 < time() - last_request < 3:
+        sleep(3)
+    last_request = time()
     r = get(url)
     while True:
         if r.status_code == 200:
@@ -30,5 +41,3 @@ def get_wrapper(url):
             sleep(retry_time)
         else:
             return r
-    
-        

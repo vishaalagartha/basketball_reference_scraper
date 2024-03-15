@@ -65,3 +65,5 @@ def get_shot_chart(date, team1, team2):
         df2 = df2.drop('index', axis=1)
 
         return {f'{team1}': df1, f'{team2}': df2}
+    else:
+        raise ConnectionError('Request to basketball reference failed')
