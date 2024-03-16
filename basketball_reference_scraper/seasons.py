@@ -1,7 +1,12 @@
 import pandas as pd
 from datetime import datetime
-from requests import get
 from bs4 import BeautifulSoup
+
+try:
+    from request_utils import get_wrapper
+except:
+    from basketball_reference_scraper.request_utils import get_wrapper
+
 
 def get_schedule(season, playoffs=False):
     months = ['October', 'November', 'December', 'January', 'February', 'March',
@@ -11,7 +16,7 @@ def get_schedule(season, playoffs=False):
                 'July', 'August', 'September', 'October-2020']
     df = pd.DataFrame()
     for month in months:
-        r = get(f'https://www.basketball-reference.com/leagues/NBA_{season}_games-{month.lower()}.html')
+        r = get_wrapper(f'https://www.basketball-reference.com/leagues/NBA_{season}_games-{month.lower()}.html')
         if r.status_code==200:
             soup = BeautifulSoup(r.content, 'html.parser')
             table = soup.find('table', attrs={'id': 'schedule'})
@@ -66,7 +71,7 @@ def get_standings(date=None):
     else:
         date = pd.to_datetime(date)
     d = {}
-    r = get(f'https://www.basketball-reference.com/friv/standings.fcgi?month={date.month}&day={date.day}&year={date.year}')
+    r = get_wrapper(f'https://www.basketball-reference.com/friv/standings.fcgi?month={date.month}&day={date.day}&year={date.year}')
     if r.status_code==200:
         soup = BeautifulSoup(r.content, 'html.parser')
         e_table = soup.find('table', attrs={'id': 'standings_e'})
@@ -80,4 +85,6 @@ def get_standings(date=None):
             w_df.rename(columns={'Western Conference': 'TEAM'}, inplace=True)
         d['EASTERN_CONF'] = e_df
         d['WESTERN_CONF'] = w_df
-    return d
+        return d
+    else:
+        raise ConnectionError('Request to basketball reference failed')

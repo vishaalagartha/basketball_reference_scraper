@@ -1,12 +1,16 @@
 import pandas as pd
-from requests import get
 from bs4 import BeautifulSoup
+try:
+    from request_utils import get_wrapper
+except:
+    from basketball_reference_scraper.request_utils import get_wrapper
+
 
 def get_draft_class(year):
-      r = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Fdraft%2FNBA_{year}.html&div=div_stats')
-      df = None
+    r = get_wrapper(f'https://www.basketball-reference.com/draft/NBA_{year}.html')
 
-      if r.status_code==200:
+
+    if r.status_code==200:
         soup = BeautifulSoup(r.content, 'html.parser')
         table = soup.find('table')
         df = pd.read_html(str(table))[0]
@@ -26,3 +30,5 @@ def get_draft_class(year):
         df = df[~df['PLAYER'].str.contains('Round|Player')]
 
         return df
+    else:
+        raise ConnectionError('Request to basketball reference failed')

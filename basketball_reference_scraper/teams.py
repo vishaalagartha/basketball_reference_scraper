@@ -1,22 +1,23 @@
 import pandas as pd
-from requests import get
 from bs4 import BeautifulSoup
 
 try:
     from constants import TEAM_TO_TEAM_ABBR, TEAM_SETS
     from utils import remove_accents
+    from request_utils import get_wrapper, get_selenium_wrapper
 except:
     from basketball_reference_scraper.constants import TEAM_TO_TEAM_ABBR, TEAM_SETS
     from basketball_reference_scraper.utils import remove_accents
+    from basketball_reference_scraper.request_utils import get_wrapper, get_selenium_wrapper
 
 
 def get_roster(team, season_end_year):
-    r = get(
+    r = get_wrapper(
         f'https://www.basketball-reference.com/teams/{team}/{season_end_year}.html')
     df = None
     if r.status_code == 200:
         soup = BeautifulSoup(r.content, 'html.parser')
-        table = soup.find('table')
+        table = soup.find('table', {'id': 'roster'})
         df = pd.read_html(str(table))[0]
         df.columns = ['NUMBER', 'PLAYER', 'POS', 'HEIGHT', 'WEIGHT', 'BIRTH_DATE',
                       'NATIONALITY', 'EXPERIENCE', 'COLLEGE']
@@ -33,124 +34,107 @@ def get_roster(team, season_end_year):
     return df
 
 
-def get_team_stats(team, season_end_year, data_format='PER_GAME'):
-    if data_format == 'TOTAL':
-        selector = 'div_totals-team'
+def get_team_stats(team, season_end_year, data_format='TOTALS'):
+    xpath = '//table[@id="team_and_opponent"]'
+    table = get_selenium_wrapper(f'https://www.basketball-reference.com/teams/{team}/{season_end_year}.html', xpath)
+    if not table:
+        raise ConnectionError('Request to basketball reference failed')
+    df = pd.read_html(table)[0]
+    opp_idx = df[df['Unnamed: 0'] == 'Opponent'].index[0]
+    df = df[:opp_idx]
+    if data_format == 'TOTALS':
+        row_idx = 'Team'
     elif data_format == 'PER_GAME':
-        selector = 'div_per_game-team'
-    elif data_format == 'PER_POSS':
-        selector = 'div_per_poss-team'
-    r = get(
-        f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Fleagues%2FNBA_{season_end_year}.html&div={selector}')
-    df = None
-    if r.status_code == 200:
-        soup = BeautifulSoup(r.content, 'html.parser')
-        table = soup.find('table')
-        df = pd.read_html(str(table))[0]
-        league_avg_index = df[df['Team'] == 'League Average'].index[0]
-        df = df[:league_avg_index]
-        df['Team'] = df['Team'].apply(lambda x: x.replace('*', '').upper())
-        df['TEAM'] = df['Team'].apply(lambda x: TEAM_TO_TEAM_ABBR[x])
-        df = df.drop(['Rk', 'Team'], axis=1)
-        df.loc[:, 'SEASON'] = f'{season_end_year-1}-{str(season_end_year)[2:]}'
-        s = df[df['TEAM'] == team]
-        return pd.Series(index=list(s.columns), data=s.values.tolist()[0])
+        row_idx = 'Team/G'
+    elif data_format == 'RANK':
+        row_idx = 'Lg Rank'
+    elif data_format == 'YEAR/YEAR':
+        row_idx = 'Year/Year'
+    else:
+        print('Invalid data format')
+        return pd.DataFrame()
+    
+    s = df[df['Unnamed: 0'] == row_idx]
+    s = s.drop(columns=['Unnamed: 0']).reindex()
+    return pd.Series(index=list(s.columns), data=s.values.tolist()[0])
 
 
 def get_opp_stats(team, season_end_year, data_format='PER_GAME'):
-    if data_format == 'TOTAL':
-        selector = 'div_totals-opponent'
+    xpath = '//table[@id="team_and_opponent"]'
+    table = get_selenium_wrapper(f'https://www.basketball-reference.com/teams/{team}/{season_end_year}.html', xpath)
+    if not table:
+        raise ConnectionError('Request to basketball reference failed')
+    df = pd.read_html(table)[0]
+    opp_idx = df[df['Unnamed: 0'] == 'Opponent'].index[0]
+    df = df[opp_idx:]
+    if data_format == 'TOTALS':
+        row_idx = 'Opponent'
     elif data_format == 'PER_GAME':
-        selector = 'div_per_game-opponent'
-    elif data_format == 'PER_POSS':
-        selector = 'div_per_poss-opponent'
-    r = get(
-        f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Fleagues%2FNBA_{season_end_year}.html&div={selector}')
-    df = None
-    if r.status_code == 200:
-        soup = BeautifulSoup(r.content, 'html.parser')
-        table = soup.find('table')
-        df = pd.read_html(str(table))[0]
-        league_avg_index = df[df['Team'] == 'League Average'].index[0]
-        df = df[:league_avg_index]
-        df['Team'] = df['Team'].apply(lambda x: x.replace('*', '').upper())
-        df['TEAM'] = df['Team'].apply(lambda x: TEAM_TO_TEAM_ABBR[x])
-        df = df.drop(['Rk', 'Team'], axis=1)
-        df.columns = list(map(lambda x: 'OPP_'+x, list(df.columns)))
-        df.rename(columns={'OPP_TEAM': 'TEAM'}, inplace=True)
-        df.loc[:, 'SEASON'] = f'{season_end_year-1}-{str(season_end_year)[2:]}'
-        s = df[df['TEAM'] == team]
-        return pd.Series(index=list(s.columns), data=s.values.tolist()[0])
+        row_idx = 'Opponent/G'
+    elif data_format == 'RANK':
+        row_idx = 'Lg Rank'
+    elif data_format == 'YEAR/YEAR':
+        row_idx = 'Year/Year'
+    else:
+        print('Invalid data format')
+        return pd.DataFrame()
+    
+    s = df[df['Unnamed: 0'] == row_idx]
+    s = s.drop(columns=['Unnamed: 0']).reindex()
+    return pd.Series(index=list(s.columns), data=s.values.tolist()[0])
 
 
-def get_team_misc(team, season_end_year):
-    r = get(
-        f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Fleagues%2FNBA_{season_end_year}.html&div=div_advanced-team')
-    df = None
-    if r.status_code == 200:
-        soup = BeautifulSoup(r.content, 'html.parser')
-        table = soup.find('table')
-        df = pd.read_html(str(table))[0]
-        df.columns = list(map(lambda x: x[1], list(df.columns)))
-        league_avg_index = df[df['Team'] == 'League Average'].index[0]
-        df = df[:league_avg_index]
-        df['Team'] = df['Team'].apply(lambda x: x.replace('*', '').upper())
-        df['TEAM'] = df['Team'].apply(lambda x: TEAM_TO_TEAM_ABBR[x])
-        df = df.drop(['Rk', 'Team'], axis=1)
-        df.rename(columns={'Age': 'AGE', 'Pace': 'PACE', 'Arena': 'ARENA',
-                  'Attend.': 'ATTENDANCE', 'Attend./G': 'ATTENDANCE/G'}, inplace=True)
-        df.loc[:, 'SEASON'] = f'{season_end_year-1}-{str(season_end_year)[2:]}'
-        s = df[df['TEAM'] == team]
-        s = s.loc[:, ~s.columns.str.contains('^Unnamed')]
-        return pd.Series(index=list(s.columns), data=s.values.tolist()[0])
-
+def get_team_misc(team, season_end_year, data_format='TOTALS'):
+    xpath = '//table[@id="team_misc"]'
+    table = get_selenium_wrapper(f'https://www.basketball-reference.com/teams/{team}/{season_end_year}.html', xpath)
+    if not table:
+        raise ConnectionError('Request to basketball reference failed')
+    df = pd.read_html(table)[0]
+    if data_format == 'TOTALS':
+        row_idx = 'Team'
+    elif data_format == 'RANK':
+        row_idx = 'Lg Rank'
+    else:
+        print('Invalid data format')
+        return pd.DataFrame()
+    df.columns = df.columns.droplevel()
+    df.rename(columns={'Arena': 'ARENA',
+                'Attendance': 'ATTENDANCE'}, inplace=True)
+    s = df[df['Unnamed: 0_level_1'] == row_idx]
+    s = s.drop(columns=['Unnamed: 0_level_1']).reindex()
+    return pd.Series(index=list(s.columns), data=s.values.tolist()[0])
 
 def get_roster_stats(team: list, season_end_year: int, data_format='PER_GAME', playoffs=False):
     if playoffs:
-        period = 'playoffs'
+        xpath=f'//table[@id="playoffs_{data_format.lower()}"]'
     else:
-        period = 'leagues'
-    selector = data_format.lower()
-    r = get(
-        f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2F{period}%2FNBA_{season_end_year}_{selector}.html&div=div_{selector}_stats')
-    df = None
-    possible_teams = [team]
-    for s in TEAM_SETS:
-        if team in s:
-            possible_teams = s
+        xpath=f'//table[@id="{data_format.lower()}"]'
+    table = get_selenium_wrapper(
+        f'https://www.basketball-reference.com/teams/{team}/{season_end_year}.html', xpath)
+    if not table:
+        raise ConnectionError('Request to basketball reference failed')
+    df = pd.read_html(table)[0]
+    df.rename(columns={'Player': 'PLAYER', 'Age': 'AGE',
+                'Tm': 'TEAM', 'Pos': 'POS'}, inplace=True)
+    df['PLAYER'] = df['PLAYER'].apply(
+        lambda name: remove_accents(name, team, season_end_year))
+    df = df.reset_index().drop(['Rk', 'index'], axis=1)
+    return df
+
+def get_team_ratings(season_end_year: int, team=[]):
+    r = get_wrapper(f'https://www.basketball-reference.com/leagues/NBA_{season_end_year}_ratings.html')
     if r.status_code == 200:
         soup = BeautifulSoup(r.content, 'html.parser')
-        table = soup.find('table')
-        df2 = pd.read_html(str(table))[0]
-        for index, row in df2.iterrows():
-            if row['Tm'] in possible_teams:
-                if df is None:
-                    df = pd.DataFrame(columns=list(row.index)+['SEASON'])
-                row['SEASON'] = f'{season_end_year-1}-{str(season_end_year)[2:]}'
-                df = df.append(row)
-        df.rename(columns={'Player': 'PLAYER', 'Age': 'AGE',
-                  'Tm': 'TEAM', 'Pos': 'POS'}, inplace=True)
-        df['PLAYER'] = df['PLAYER'].apply(
-            lambda name: remove_accents(name, team, season_end_year))
-        df = df.reset_index().drop(['Rk', 'index'], axis=1)
-        return df
-
-def get_team_ratings(*, team=[], season_end_year: int):
-
-    # Scrape data from URL
-    r = get(f'https://widgets.sports-reference.com/wg.fcgi?css=1&site=bbr&url=%2Fleagues%2FNBA_{season_end_year}_ratings.html&div=div_ratings')
-    if r.status_code == 200:
-        soup = BeautifulSoup(r.content, 'html.parser')
-        table = soup.find('table')
+        table = soup.find('table', { 'id': 'ratings' })
+    
         df = pd.read_html(str(table))[0]
-
         # Clean columns and indexes
         df = df.droplevel(level=0, axis=1)
         
-        df.drop(columns=['Rk', 'Conf', 'Div', 'W', 'L', 'W/L%'], inplace=True)
         upper_cols = list(pd.Series(df.columns).apply(lambda x: x.upper()))
         df.columns = upper_cols
-
+        df.dropna(inplace=True)
+        df = df[df['RK'] != 'Rk']
         df['TEAM'] = df['TEAM'].apply(lambda x: x.upper())
         df['TEAM'] = df['TEAM'].apply(lambda x: TEAM_TO_TEAM_ABBR[x])
 
@@ -168,5 +152,7 @@ def get_team_ratings(*, team=[], season_end_year: int):
                 df = df[df['TEAM'].isin(list_team)]
             else:
                 df = df[df['TEAM'].isin(team)]
-                    
-    return df
+        df = df.reindex()
+        return df
+    else:
+        raise ConnectionError('Request to basketball reference failed')

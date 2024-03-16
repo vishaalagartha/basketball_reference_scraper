@@ -8,9 +8,11 @@ import re
 try:
     from utils import get_game_suffix, remove_accents
     from players import get_stats 
+    from request_utils import get_wrapper
 except:
     from basketball_reference_scraper.utils import get_game_suffix, remove_accents
     from basketball_reference_scraper.players import get_stats
+    from basketball_reference_scraper.request_utils import get_wrapper
 
 def get_box_scores(date, team1, team2, period='GAME', stat_type='BASIC'):
     """
@@ -30,31 +32,29 @@ def get_box_scores(date, team1, team2, period='GAME', stat_type='BASIC'):
         raise ValueError('stat_type must be "BASIC" or "ADVANCED"')
     date = pd.to_datetime(date)
     suffix = get_game_suffix(date, team1, team2)
-    boxscore_url="https://www.basketball-reference.com"+suffix
-    response = get(boxscore_url)
-    dfs = []
-    if stat_type == 'BASIC':
-        table_selector_ids={
-            team1:f"box-{team1}-game-basic",
-            team2:f"box-{team2}-game-basic",
-        }
-    if stat_type == 'ADVANCED':
-        table_selector_ids={
-            team1:f"box-{team1}-game-advanced",
-            team2:f"box-{team2}-game-advanced"
-        }
-
-    if response.status_code==200:
-        for team,selector_id in table_selector_ids.items():
-            soup = BeautifulSoup(response.content, 'html.parser')
-            table = soup.select(f"#{selector_id}")
+    r = get_wrapper(f'https://www.basketball-reference.com/{suffix}')
+    if r.status_code == 200:
+        dfs = []
+        if period == 'GAME':
+            if stat_type == 'ADVANCED':
+                selectors = [f'box-{team1}-game-advanced', f'box-{team2}-game-advanced']
+            else:
+                selectors = [f'box-{team1}-game-basic', f'box-{team2}-game-basic']
+        else:
+            selectors = [f'box-{team1}-{period.lower()}-basic', f'box-{period.lower()}-game-basic']
+        soup = BeautifulSoup(r.content, 'html.parser')
+        for selector in selectors:
+            table = soup.find('table', { 'id': selector })
             raw_df = pd.read_html(str(table))[0]
             df = _process_box(raw_df)
-            df['PLAYER'] = df['PLAYER'].apply(lambda name: remove_accents(name, team, date.year))
+            if team1 in selector:
+                df['PLAYER'] = df['PLAYER'].apply(lambda name: remove_accents(name, team1, date.year))
+            if team2 in selector:
+                 df['PLAYER'] = df['PLAYER'].apply(lambda name: remove_accents(name, team2, date.year))
             dfs.append(df)
         return {team1: dfs[0], team2: dfs[1]}
     else:
-        raise Exception(f"Response status code: {response.status_code}")
+        raise ConnectionError('Request to basketball reference failed')
 
 def _process_box(df):
     """ Perform basic processing on a box score - common to both methods
@@ -72,6 +72,7 @@ def _process_box(df):
     reserve_index = df[df['PLAYER']=='Reserves'].index[0]
     df = df.drop(reserve_index).reset_index().drop('index', axis=1) 
     return df
+    
 
 
 def get_all_star_box_score(year: int):
@@ -89,7 +90,7 @@ def get_all_star_box_score(year: int):
     """
     if year >= datetime.now().year or year < 1951:
         raise ValueError('Please enter a valid year')
-    r = get(f'https://www.basketball-reference.com/allstar/NBA_{year}.html')
+    r = get_wrapper(f'https://www.basketball-reference.com/allstar/NBA_{year}.html')
     if r.status_code == 200:
         dfs = []
         soup = BeautifulSoup(r.content, 'html.parser')
@@ -121,4 +122,3 @@ def get_all_star_box_score(year: int):
         return res 
     else:
         raise ConnectionError('Request to basketball reference failed')
-
